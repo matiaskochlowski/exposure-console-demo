@@ -1,0 +1,84 @@
+{
+  "name": "exposure-console-demo",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Exposure-management console demo: virtualized findings queue, AI analyst with human-in-the-loop actions, built with Claude Code.",
+  "license": "MIT",
+  "type": "module",
+  "engines": {
+    "node": ">=22.12"
+  },
+  "scripts": {
+    "data": "tsx scripts/generate-data.ts",
+    "predev": "npm run data",
+    "dev": "vite",
+    "dev:full": "vercel dev",
+    "prebuild": "npm run data",
+    "build": "vite build",
+    "preview": "vite preview --port 4173 --strictPort",
+    "lint": "eslint .",
+    "format": "prettier --write .",
+    "format:check": "prettier --check .",
+    "typecheck": "tsc -b",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "test:hooks": "node --test .claude/hooks/*.test.mjs",
+    "test:e2e": "playwright test",
+    "size": "size-limit",
+    "check:fast": "npm run typecheck && npm test",
+    "check": "npm run lint && npm run format:check && npm run typecheck && npm test && npm run test:hooks && npm run build && npm run size"
+  },
+  "dependencies": {
+    "@anthropic-ai/sdk": "0.132.1",
+    "@tanstack/react-table": "8.21.3",
+    "@tanstack/react-virtual": "3.14.13",
+    "react": "19.3.0",
+    "react-dom": "19.3.0",
+    "react-markdown": "10.1.0",
+    "react-router": "7.18.4",
+    "zod": "4.6.5"
+  },
+  "devDependencies": {
+    "@axe-core/playwright": "4.13.0",
+    "@eslint/js": "9.39.5",
+    "@playwright/test": "1.64.0",
+    "@size-limit/file": "11.2.0",
+    "@tailwindcss/vite": "4.3.3",
+    "@testing-library/dom": "10.4.2",
+    "@testing-library/jest-dom": "6.10.0",
+    "@testing-library/react": "16.3.3",
+    "@testing-library/user-event": "14.6.7",
+    "@types/node": "22.20.5",
+    "@types/react": "19.3.0",
+    "@types/react-dom": "19.3.0",
+    "@vitejs/plugin-react": "5.2.0",
+    "eslint": "9.39.5",
+    "eslint-plugin-jsx-a11y": "6.10.2",
+    "eslint-plugin-react-hooks": "5.2.0",
+    "eslint-plugin-react-refresh": "0.4.26",
+    "globals": "16.5.0",
+    "jsdom": "27.4.0",
+    "prettier": "3.9.9",
+    "size-limit": "11.2.0",
+    "tailwindcss": "4.3.3",
+    "tsx": "4.23.15",
+    "typescript": "5.9.3",
+    "typescript-eslint": "8.71.1",
+    "vite": "7.3.7",
+    "vitest": "4.1.11"
+  },
+  "size-limit": [
+    {
+      "name": "initial JS (gzip)",
+      "path": "dist/assets/index-*.js",
+      "gzip": true,
+      "limit": "250 KB"
+    },
+    {
+      "name": "finding drawer chunk (gzip)",
+      "path": "dist/assets/FindingRoute-*.js",
+      "gzip": true,
+      "limit": "80 KB"
+    }
+  ]
+}
