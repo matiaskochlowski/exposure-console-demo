@@ -1,8 +1,8 @@
 // @vitest-environment node
 import { afterEach, describe, expect, it, vi } from 'vitest';
-import { POST as preview } from '../assist-preview.ts';
-import { POST as assist, liveEnabled } from '../assist.ts';
-import { findFindingById } from '../../src/shared/generate.ts';
+import { POST as preview } from '../assist-preview.js';
+import { POST as assist, liveEnabled } from '../assist.js';
+import { findFindingById } from '../../src/shared/generate.js';
 
 function post(
   body: unknown,

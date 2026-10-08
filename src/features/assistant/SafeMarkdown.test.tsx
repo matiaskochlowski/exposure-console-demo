@@ -1,7 +1,7 @@
 import { render, screen } from '@testing-library/react';
 import { describe, expect, it } from 'vitest';
-import { SafeMarkdown } from './SafeMarkdown.tsx';
-import { safeUrl } from './safeUrl.ts';
+import { SafeMarkdown } from './SafeMarkdown.js';
+import { safeUrl } from './safeUrl.js';
 
 describe('safeUrl', () => {
   it.each([

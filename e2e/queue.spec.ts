@@ -1,5 +1,5 @@
 import { expect, test } from '@playwright/test';
-import { findings, freshPage } from './fixtures.ts';
+import { findings, freshPage } from './fixtures.js';
 
 test('loads 10k findings but renders only a window of rows', async ({ page }) => {
   await freshPage(page);

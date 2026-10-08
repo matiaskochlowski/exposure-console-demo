@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from 'react';
-import { ENVIRONMENTS, PRIORITIES, STATUSES, STATUS_LABEL } from '../../shared/finding.ts';
-import { Button, controlClass, cx } from '../../ui/index.ts';
-import type { Filters } from './filters.ts';
+import { ENVIRONMENTS, PRIORITIES, STATUSES, STATUS_LABEL } from '../../shared/finding.js';
+import { Button, controlClass, cx } from '../../ui/index.js';
+import type { Filters } from './filters.js';
 
 interface FilterBarProps {
   filters: Filters;

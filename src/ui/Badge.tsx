@@ -1,7 +1,7 @@
 import type { ReactNode } from 'react';
-import type { Priority, Status } from '../shared/finding.ts';
-import { STATUS_LABEL } from '../shared/finding.ts';
-import { cx } from './cx.ts';
+import type { Priority, Status } from '../shared/finding.js';
+import { STATUS_LABEL } from '../shared/finding.js';
+import { cx } from './cx.js';
 
 export type Tone = 'neutral' | 'ok' | 'warn' | 'danger' | 'accent' | 'p1' | 'p2' | 'p3' | 'p4';
 

@@ -1,11 +1,11 @@
 import { use, type ReactNode } from 'react';
 import { useLocation, useNavigate, useParams } from 'react-router';
-import { useActionsState } from '../../actions/store.ts';
-import { useAssistantProvider } from '../../ai/useProvider.ts';
-import { loadDataset, toRow } from '../../data/findings.ts';
-import { detectInjection } from '../../shared/detectInjection.ts';
-import { Badge, Drawer, PriorityBadge, StatusBadge } from '../../ui/index.ts';
-import { AssistantPanel } from '../assistant/AssistantPanel.tsx';
+import { useActionsState } from '../../actions/store.js';
+import { useAssistantProvider } from '../../ai/useProvider.js';
+import { loadDataset, toRow } from '../../data/findings.js';
+import { detectInjection } from '../../shared/detectInjection.js';
+import { Badge, Drawer, PriorityBadge, StatusBadge } from '../../ui/index.js';
+import { AssistantPanel } from '../assistant/AssistantPanel.js';
 
 function Stat({ label, children }: { label: string; children: ReactNode }) {
   return (

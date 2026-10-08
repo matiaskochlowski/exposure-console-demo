@@ -1,5 +1,5 @@
 import type { ComponentProps } from 'react';
-import { cx } from './cx.ts';
+import { cx } from './cx.js';
 
 type Variant = 'primary' | 'secondary' | 'ghost' | 'danger';
 type Size = 'sm' | 'md';

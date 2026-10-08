@@ -1,13 +1,13 @@
 import { lazy, Suspense } from 'react';
 import { BrowserRouter, Link, Route, Routes } from 'react-router';
-import QueuePage from './features/queue/QueuePage.tsx';
-import { AppShell } from './layout/AppShell.tsx';
-import { ErrorBoundary } from './layout/ErrorBoundary.tsx';
-import { QueueSkeleton } from './layout/QueueSkeleton.tsx';
-import { ToastProvider } from './ui/index.ts';
+import QueuePage from './features/queue/QueuePage.js';
+import { AppShell } from './layout/AppShell.js';
+import { ErrorBoundary } from './layout/ErrorBoundary.js';
+import { QueueSkeleton } from './layout/QueueSkeleton.js';
+import { ToastProvider } from './ui/index.js';
 
 // The drawer pulls in the markdown renderer and AI code; load it on first open.
-const FindingRoute = lazy(() => import('./features/finding/FindingRoute.tsx'));
+const FindingRoute = lazy(() => import('./features/finding/FindingRoute.js'));
 
 function NotFound() {
   return (

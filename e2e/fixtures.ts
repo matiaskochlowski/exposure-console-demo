@@ -1,7 +1,7 @@
 import AxeBuilder from '@axe-core/playwright';
 import { expect, type Page } from '@playwright/test';
-import { generateFindings, INJECTED_SCANNER_TEXT } from '../src/shared/generate.ts';
-import { priorityFor, riskScore } from '../src/shared/risk.ts';
+import { generateFindings, INJECTED_SCANNER_TEXT } from '../src/shared/generate.js';
+import { priorityFor, riskScore } from '../src/shared/risk.js';
 
 // Same deterministic dataset the app loads, so tests can pick findings by property.
 const rows = generateFindings().map((f) => ({ ...f, priority: priorityFor(riskScore(f)) }));

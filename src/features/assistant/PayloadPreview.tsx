@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
-import { buildFindingContext, type ClientState, type FindingContext } from '../../shared/assist.ts';
-import type { Finding } from '../../shared/finding.ts';
-import { Badge } from '../../ui/index.ts';
+import { buildFindingContext, type ClientState, type FindingContext } from '../../shared/assist.js';
+import type { Finding } from '../../shared/finding.js';
+import { Badge } from '../../ui/index.js';
 
 /**
  * "What the analyst receives". In live mode this is fetched from the server, which builds the real

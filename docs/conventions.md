@@ -2,8 +2,9 @@
 
 ## Code
 
-- TypeScript strict with `noUncheckedIndexedAccess`; no `any`. Import with explicit `.ts`/`.tsx`
-  extensions (the same files compile for the browser, Node scripts and Vercel functions).
+- TypeScript strict with `noUncheckedIndexedAccess`; no `any`. Relative imports use explicit `.js`
+  extensions (`./risk.js` for `risk.ts`): Vercel compiles `api/` and `src/shared/` file by file to
+  Node ESM, which needs real `.js` specifiers; Vite, Vitest, tsx and Playwright map them back to `.ts`.
 - `src/shared/` stays framework-free and side-effect-free so the server can import it.
 - Validate at boundaries with Zod (`fetch` results, URL params, request bodies, model tool calls), then
   trust the types inside.

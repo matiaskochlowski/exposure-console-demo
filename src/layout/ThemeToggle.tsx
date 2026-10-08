@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { Button } from '../ui/index.ts';
+import { Button } from '../ui/index.js';
 
 type Theme = 'system' | 'light' | 'dark';
 const KEY = 'exposure-console:theme';

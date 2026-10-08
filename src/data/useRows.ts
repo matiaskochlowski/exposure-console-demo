@@ -1,6 +1,6 @@
 import { useMemo } from 'react';
-import { useActionsState } from '../actions/store.ts';
-import { toRow, type Dataset, type Row } from './findings.ts';
+import { useActionsState } from '../actions/store.js';
+import { toRow, type Dataset, type Row } from './findings.js';
 
 /** Base dataset with approved actions applied. Recomputed only when overrides change. */
 export function useRows(dataset: Dataset): Row[] {

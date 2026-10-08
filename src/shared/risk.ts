@@ -1,4 +1,4 @@
-import type { Finding, Priority } from './finding.ts';
+import type { Finding, Priority } from './finding.js';
 
 /** Inputs to the risk score, documented in docs/glossary.md. */
 export type RiskInputs = Pick<

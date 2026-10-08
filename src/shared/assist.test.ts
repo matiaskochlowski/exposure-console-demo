@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
-import { assistRequestSchema, boundHistory, buildFindingContext } from './assist.ts';
-import { generateFindings } from './generate.ts';
+import { assistRequestSchema, boundHistory, buildFindingContext } from './assist.js';
+import { generateFindings } from './generate.js';
 
 const [finding] = generateFindings(1);
 

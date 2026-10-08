@@ -1,6 +1,6 @@
 import { z } from 'zod';
-import { ENVIRONMENTS, PRIORITIES, STATUSES, type Priority } from '../../shared/finding.ts';
-import type { Row } from '../../data/findings.ts';
+import { ENVIRONMENTS, PRIORITIES, STATUSES, type Priority } from '../../shared/finding.js';
+import type { Row } from '../../data/findings.js';
 
 export const SORT_KEYS = ['risk', 'cvss', 'epss', 'firstSeen', 'id'] as const;
 export type SortKey = (typeof SORT_KEYS)[number];

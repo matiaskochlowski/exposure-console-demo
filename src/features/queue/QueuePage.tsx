@@ -1,11 +1,11 @@
 import { use, useCallback, useDeferredValue, useEffect, useMemo, useRef, useState } from 'react';
 import { Outlet, useLocation, useMatch, useNavigate, useSearchParams } from 'react-router';
-import { loadDataset } from '../../data/findings.ts';
-import { useRows } from '../../data/useRows.ts';
-import { Button } from '../../ui/index.ts';
-import { RESET_EVENT } from '../../layout/reset.ts';
-import { toCsv } from './csv.ts';
-import { FilterBar } from './FilterBar.tsx';
+import { loadDataset } from '../../data/findings.js';
+import { useRows } from '../../data/useRows.js';
+import { Button } from '../../ui/index.js';
+import { RESET_EVENT } from '../../layout/reset.js';
+import { toCsv } from './csv.js';
+import { FilterBar } from './FilterBar.js';
 import {
   DEFAULT_FILTERS,
   parseFilters,
@@ -13,8 +13,8 @@ import {
   serializeFilters,
   type Filters,
   type SortKey,
-} from './filters.ts';
-import { FindingsTable } from './FindingsTable.tsx';
+} from './filters.js';
+import { FindingsTable } from './FindingsTable.js';
 
 function download(name: string, content: string) {
   const url = URL.createObjectURL(new Blob([content], { type: 'text/csv;charset=utf-8' }));

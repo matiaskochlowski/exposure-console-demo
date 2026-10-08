@@ -7,7 +7,7 @@ import {
   useState,
   type ReactNode,
 } from 'react';
-import { cx } from './cx.ts';
+import { cx } from './cx.js';
 
 interface ToastItem {
   id: number;

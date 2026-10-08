@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
-import { boundHistory } from '../../shared/assist.ts';
-import { answeredPairs, type Turn } from './useAssistant.ts';
+import { boundHistory } from '../../shared/assist.js';
+import { answeredPairs, type Turn } from './useAssistant.js';
 
 const t = (role: Turn['role'], content: string, state: Turn['state'] = 'done'): Turn => ({
   id: content,

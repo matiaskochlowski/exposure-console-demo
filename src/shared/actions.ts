@@ -1,5 +1,5 @@
 import { z } from 'zod';
-import { PRIORITIES } from './finding.ts';
+import { PRIORITIES } from './finding.js';
 
 /**
  * The only actions the AI analyst may PROPOSE. Nothing executes until a person approves it in the

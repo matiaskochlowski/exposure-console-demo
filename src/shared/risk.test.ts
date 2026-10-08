@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { priorityFor, riskDrivers, riskScore } from './risk.ts';
+import { priorityFor, riskDrivers, riskScore } from './risk.js';
 
 const base = {
   cvss: 0,

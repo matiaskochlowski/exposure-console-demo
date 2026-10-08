@@ -1,21 +1,21 @@
 // @vitest-environment node
 import Anthropic from '@anthropic-ai/sdk';
 import { describe, expect, it } from 'vitest';
-import { buildFindingContext } from '../../src/shared/assist.ts';
+import { buildFindingContext } from '../../src/shared/assist.js';
 import {
   findFindingById,
   generateFindings,
   INJECTED_SCANNER_TEXT,
-} from '../../src/shared/generate.ts';
-import type { StreamEvent } from '../../src/shared/stream.ts';
+} from '../../src/shared/generate.js';
+import type { StreamEvent } from '../../src/shared/stream.js';
 import {
   policyAllows,
   runAnalyst,
   toErrorEvent,
   type ModelStream,
   type StreamFactory,
-} from './claude.ts';
-import { buildMessages, buildUserContent, toolDefinitions } from './prompt.ts';
+} from './claude.js';
+import { buildMessages, buildUserContent, toolDefinitions } from './prompt.js';
 
 const finding = findFindingById('DEMO-2026-00016')!;
 const request = {

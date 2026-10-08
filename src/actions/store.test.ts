@@ -1,7 +1,7 @@
 import { describe, expect, it, vi } from 'vitest';
-import { generateFindings } from '../shared/generate.ts';
-import { createActionsStore } from './store.ts';
-import { EMPTY_STATE } from './types.ts';
+import { generateFindings } from '../shared/generate.js';
+import { createActionsStore } from './store.js';
+import { EMPTY_STATE } from './types.js';
 
 const base = { ...generateFindings(1)[0]!, status: 'open' as const };
 
@@ -38,7 +38,7 @@ describe('actions store', () => {
   it('falls back to an empty state when storage is unavailable or corrupt', async () => {
     localStorage.setItem('exposure-console:actions:v1', '{corrupt');
     vi.resetModules();
-    const { actionsStore } = await import('./store.ts');
+    const { actionsStore } = await import('./store.js');
     expect(actionsStore.getState()).toEqual(EMPTY_STATE);
   });
 });
@@ -50,12 +50,12 @@ describe('parseActionsState', () => {
     ['{"overrides":{"a":{"status":"deleted"}},"proposals":{},"audit":[],"nextTicket":1001}'],
     ['[]'],
   ])('falls back to empty for invalid stored state %s', async (raw) => {
-    const { parseActionsState } = await import('./schema.ts');
+    const { parseActionsState } = await import('./schema.js');
     expect(parseActionsState(raw)).toEqual(EMPTY_STATE);
   });
 
   it('accepts a valid stored state', async () => {
-    const { parseActionsState } = await import('./schema.ts');
+    const { parseActionsState } = await import('./schema.js');
     const valid = {
       ...EMPTY_STATE,
       overrides: { 'DEMO-2026-00001': { status: 'in_progress', ticketId: 'SIM-1001' } },

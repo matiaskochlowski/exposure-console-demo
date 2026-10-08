@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
-import { detectInjection } from './detectInjection.ts';
-import { INJECTED_SCANNER_TEXT } from './generate.ts';
+import { detectInjection } from './detectInjection.js';
+import { INJECTED_SCANNER_TEXT } from './generate.js';
 
 describe('detectInjection', () => {
   it.each(INJECTED_SCANNER_TEXT)('flags seeded sample: %s', (text) => {

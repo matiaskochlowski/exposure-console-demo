@@ -1,5 +1,5 @@
 import Markdown, { type Components } from 'react-markdown';
-import { safeUrl } from './safeUrl.ts';
+import { safeUrl } from './safeUrl.js';
 
 /**
  * Renders model output. Model text is untrusted (ADR 0003):

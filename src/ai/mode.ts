@@ -1,9 +1,9 @@
-import type { AssistRequest } from '../shared/assist.ts';
-import type { Finding } from '../shared/finding.ts';
-import type { StreamEvent } from '../shared/stream.ts';
-import { createHttpProvider, ProviderUnavailableError } from './httpProvider.ts';
-import { createMockProvider } from './mockProvider.ts';
-import type { AssistantProvider } from './provider.ts';
+import type { AssistRequest } from '../shared/assist.js';
+import type { Finding } from '../shared/finding.js';
+import type { StreamEvent } from '../shared/stream.js';
+import { createHttpProvider, ProviderUnavailableError } from './httpProvider.js';
+import { createMockProvider } from './mockProvider.js';
+import type { AssistantProvider } from './provider.js';
 
 export type AiMode = 'mock' | 'live';
 

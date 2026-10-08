@@ -1,13 +1,13 @@
 // @vitest-environment node
 import { describe, expect, it } from 'vitest';
-import type { AssistRequest } from '../shared/assist.ts';
-import { generateFindings, INJECTED_SCANNER_TEXT } from '../shared/generate.ts';
-import { encodeSse, type StreamEvent } from '../shared/stream.ts';
-import { createHttpProvider } from './httpProvider.ts';
-import { createMockProvider, planResponse } from './mockProvider.ts';
-import { withMockFallback } from './mode.ts';
-import { buildFindingContext } from '../shared/assist.ts';
-import type { AssistantProvider } from './provider.ts';
+import type { AssistRequest } from '../shared/assist.js';
+import { generateFindings, INJECTED_SCANNER_TEXT } from '../shared/generate.js';
+import { encodeSse, type StreamEvent } from '../shared/stream.js';
+import { createHttpProvider } from './httpProvider.js';
+import { createMockProvider, planResponse } from './mockProvider.js';
+import { withMockFallback } from './mode.js';
+import { buildFindingContext } from '../shared/assist.js';
+import type { AssistantProvider } from './provider.js';
 
 const rows = generateFindings();
 const byId = new Map(rows.map((f) => [f.id, f]));

@@ -1,5 +1,5 @@
 import { z } from 'zod';
-import { actionCallSchema } from './actions.ts';
+import { actionCallSchema } from './actions.js';
 
 /** Wire protocol between the assistant providers and the UI (SSE frames, one JSON event each). */
 export const ERROR_CODES = [

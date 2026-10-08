@@ -1,5 +1,5 @@
-import type { AssistRequest } from '../shared/assist.ts';
-import type { StreamEvent } from '../shared/stream.ts';
+import type { AssistRequest } from '../shared/assist.js';
+import type { StreamEvent } from '../shared/stream.js';
 
 export interface AssistantProvider {
   readonly mode: 'mock' | 'live';

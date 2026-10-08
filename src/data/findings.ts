@@ -1,6 +1,6 @@
-import { findingSchema, type Finding, type Priority, type Status } from '../shared/finding.ts';
-import { priorityFor, riskScore } from '../shared/risk.ts';
-import type { FindingOverride } from '../actions/types.ts';
+import { findingSchema, type Finding, type Priority, type Status } from '../shared/finding.js';
+import { priorityFor, riskScore } from '../shared/risk.js';
+import type { FindingOverride } from '../actions/types.js';
 
 /** A finding plus derived fields; immutable once loaded. */
 export interface BaseRow extends Finding {

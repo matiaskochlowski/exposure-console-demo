@@ -1,9 +1,9 @@
 import { useState, type ReactNode } from 'react';
-import { actionsStore } from '../actions/store.ts';
-import { configuredMode } from '../ai/mode.ts';
-import { Badge, Button, useToast } from '../ui/index.ts';
-import { RESET_EVENT } from './reset.ts';
-import { ThemeToggle } from './ThemeToggle.tsx';
+import { actionsStore } from '../actions/store.js';
+import { configuredMode } from '../ai/mode.js';
+import { Badge, Button, useToast } from '../ui/index.js';
+import { RESET_EVENT } from './reset.js';
+import { ThemeToggle } from './ThemeToggle.js';
 
 const INTRO_KEY = 'exposure-console:intro-dismissed';
 

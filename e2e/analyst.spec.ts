@@ -1,5 +1,5 @@
 import { expect, test, type Page } from '@playwright/test';
-import { findings, freshPage } from './fixtures.ts';
+import { findings, freshPage } from './fixtures.js';
 
 async function ask(page: Page, question = 'What should we do about this?') {
   await page.getByRole('button', { name: question }).click();

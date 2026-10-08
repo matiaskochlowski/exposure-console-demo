@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
-import { findingSchema } from './finding.ts';
-import { INJECTED_SCANNER_TEXT, findFindingById, generateFindings } from './generate.ts';
+import { findingSchema } from './finding.js';
+import { INJECTED_SCANNER_TEXT, findFindingById, generateFindings } from './generate.js';
 
 describe('generateFindings', () => {
   const rows = generateFindings();

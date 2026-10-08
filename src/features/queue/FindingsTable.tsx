@@ -1,8 +1,8 @@
 import { useVirtualizer } from '@tanstack/react-virtual';
 import { memo, useEffect, useRef, useState, type KeyboardEvent } from 'react';
-import type { Row } from '../../data/findings.ts';
-import { Badge, PriorityBadge, StatusBadge, cx } from '../../ui/index.ts';
-import type { Filters, SortKey } from './filters.ts';
+import type { Row } from '../../data/findings.js';
+import { Badge, PriorityBadge, StatusBadge, cx } from '../../ui/index.js';
+import type { Filters, SortKey } from './filters.js';
 
 const ROW_HEIGHT = 56;
 const HEADER_HEIGHT = 40;

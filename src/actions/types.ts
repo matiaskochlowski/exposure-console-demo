@@ -1,5 +1,5 @@
-import type { ActionCall } from '../shared/actions.ts';
-import type { Priority, Status } from '../shared/finding.ts';
+import type { ActionCall } from '../shared/actions.js';
+import type { Priority, Status } from '../shared/finding.js';
 
 /** Human/simulated changes layered over the static dataset. */
 export interface FindingOverride {

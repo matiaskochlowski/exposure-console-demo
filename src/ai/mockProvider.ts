@@ -1,8 +1,8 @@
-import type { ActionCall } from '../shared/actions.ts';
-import { buildFindingContext, type AssistRequest, type FindingContext } from '../shared/assist.ts';
-import type { Finding } from '../shared/finding.ts';
-import type { StreamEvent } from '../shared/stream.ts';
-import { newId, type AssistantProvider } from './provider.ts';
+import type { ActionCall } from '../shared/actions.js';
+import { buildFindingContext, type AssistRequest, type FindingContext } from '../shared/assist.js';
+import type { Finding } from '../shared/finding.js';
+import type { StreamEvent } from '../shared/stream.js';
+import { newId, type AssistantProvider } from './provider.js';
 
 /**
  * Deterministic scripted analyst. It reads the same allowlisted, redacted context a live model

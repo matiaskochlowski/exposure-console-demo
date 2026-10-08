@@ -1,6 +1,6 @@
 import { expect, test } from '@playwright/test';
 import { mkdirSync, writeFileSync } from 'node:fs';
-import { freshPage } from './fixtures.ts';
+import { freshPage } from './fixtures.js';
 
 // Budget from docs/perf.md: filter-to-render ≤ 200 ms for 10k rows with 4× CPU throttling.
 test('filter-to-render stays within budget under 4× CPU throttling @desktop-only', async ({

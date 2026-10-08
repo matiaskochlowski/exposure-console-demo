@@ -1,8 +1,8 @@
 import Anthropic from '@anthropic-ai/sdk';
-import { validateActionCall, type ActionCall } from '../../src/shared/actions.ts';
-import type { AssistRequest, FindingContext } from '../../src/shared/assist.ts';
-import type { StreamEvent } from '../../src/shared/stream.ts';
-import { buildMessages, SYSTEM_PROMPT, toolDefinitions } from './prompt.ts';
+import { validateActionCall, type ActionCall } from '../../src/shared/actions.js';
+import type { AssistRequest, FindingContext } from '../../src/shared/assist.js';
+import type { StreamEvent } from '../../src/shared/stream.js';
+import { buildMessages, SYSTEM_PROMPT, toolDefinitions } from './prompt.js';
 
 export const DEFAULT_MODEL = 'claude-opus-5-5';
 

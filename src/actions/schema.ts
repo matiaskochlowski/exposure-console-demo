@@ -1,7 +1,7 @@
 import { z } from 'zod';
-import { actionCallSchema } from '../shared/actions.ts';
-import { PRIORITIES, STATUSES } from '../shared/finding.ts';
-import { EMPTY_STATE, type ActionsState } from './types.ts';
+import { actionCallSchema } from '../shared/actions.js';
+import { PRIORITIES, STATUSES } from '../shared/finding.js';
+import { EMPTY_STATE, type ActionsState } from './types.js';
 
 /** localStorage is untrusted (older builds, other tabs, hand edits): parse it before use. */
 const overrideSchema = z.strictObject({

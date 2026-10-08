@@ -1,8 +1,8 @@
 import Anthropic from '@anthropic-ai/sdk';
-import { buildFindingContext } from '../src/shared/assist.ts';
-import { findFindingById } from '../src/shared/generate.ts';
-import { runAnalyst, sdkStreamFactory, toErrorEvent } from './_lib/claude.ts';
-import { jsonError, parseAssist, readJson, rejection, sseResponse } from './_lib/http.ts';
+import { buildFindingContext } from '../src/shared/assist.js';
+import { findFindingById } from '../src/shared/generate.js';
+import { runAnalyst, sdkStreamFactory, toErrorEvent } from './_lib/claude.js';
+import { jsonError, parseAssist, readJson, rejection, sseResponse } from './_lib/http.js';
 
 /** Live mode needs an explicit opt-in as well as a key, so a key added to a preview doesn't open it. */
 export function liveEnabled(): boolean {

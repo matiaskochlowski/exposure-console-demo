@@ -1,8 +1,8 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
-import { actionsStore } from '../../actions/store.ts';
-import { isTerminal, newId, type AssistantProvider } from '../../ai/provider.ts';
-import { boundHistory, type ChatTurn, type ClientState } from '../../shared/assist.ts';
-import type { ErrorCode } from '../../shared/stream.ts';
+import { actionsStore } from '../../actions/store.js';
+import { isTerminal, newId, type AssistantProvider } from '../../ai/provider.js';
+import { boundHistory, type ChatTurn, type ClientState } from '../../shared/assist.js';
+import type { ErrorCode } from '../../shared/stream.js';
 
 export interface Turn {
   id: string;

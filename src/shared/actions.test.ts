@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { validateActionCall } from './actions.ts';
+import { validateActionCall } from './actions.js';
 
 describe('validateActionCall', () => {
   it('accepts a well-formed proposal', () => {

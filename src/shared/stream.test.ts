@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { createSseParser, encodeSse, type StreamEvent } from './stream.ts';
+import { createSseParser, encodeSse, type StreamEvent } from './stream.js';
 
 const events: StreamEvent[] = [
   { type: 'start', requestId: 'req-00001', mode: 'live' },

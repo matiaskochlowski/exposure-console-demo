@@ -1,5 +1,5 @@
 import { Component, type ReactNode } from 'react';
-import { Button } from '../ui/index.ts';
+import { Button } from '../ui/index.js';
 
 interface State {
   error?: Error;

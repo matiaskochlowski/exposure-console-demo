@@ -1,9 +1,9 @@
-import { ACTIONS, validateActionCall, type ActionCall } from '../shared/actions.ts';
-import { detectInjection } from '../shared/detectInjection.ts';
-import type { Finding, Priority, Status } from '../shared/finding.ts';
-import { priorityFor, riskScore } from '../shared/risk.ts';
-import { STATUS_LABEL } from '../shared/finding.ts';
-import type { ActionsState, FindingOverride, Proposal } from './types.ts';
+import { ACTIONS, validateActionCall, type ActionCall } from '../shared/actions.js';
+import { detectInjection } from '../shared/detectInjection.js';
+import type { Finding, Priority, Status } from '../shared/finding.js';
+import { priorityFor, riskScore } from '../shared/risk.js';
+import { STATUS_LABEL } from '../shared/finding.js';
+import type { ActionsState, FindingOverride, Proposal } from './types.js';
 
 export type ExecuteResult =
   | { kind: 'executed'; state: ActionsState; summary: string }

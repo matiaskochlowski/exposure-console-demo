@@ -1,8 +1,8 @@
 import { z } from 'zod';
-import { PRIORITIES, STATUSES, type Finding } from './finding.ts';
-import { detectInjection, type InjectionVerdict } from './detectInjection.ts';
-import { redact } from './redact.ts';
-import { priorityFor, riskDrivers, riskScore } from './risk.ts';
+import { PRIORITIES, STATUSES, type Finding } from './finding.js';
+import { detectInjection, type InjectionVerdict } from './detectInjection.js';
+import { redact } from './redact.js';
+import { priorityFor, riskDrivers, riskScore } from './risk.js';
 
 export const MAX_HISTORY_TURNS = 6;
 export const MAX_REQUEST_BYTES = 8 * 1024;

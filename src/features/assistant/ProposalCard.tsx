@@ -1,11 +1,11 @@
 import { useEffect, useRef, useState } from 'react';
-import { actionsStore } from '../../actions/store.ts';
-import type { Proposal } from '../../actions/types.ts';
-import { ACTIONS, ASSIGNEES, RISK_EXPIRY_DAYS, type ActionCall } from '../../shared/actions.ts';
-import { detectInjection } from '../../shared/detectInjection.ts';
-import type { Finding } from '../../shared/finding.ts';
-import { PRIORITIES } from '../../shared/finding.ts';
-import { Badge, Button, Field, inputClass, type Tone } from '../../ui/index.ts';
+import { actionsStore } from '../../actions/store.js';
+import type { Proposal } from '../../actions/types.js';
+import { ACTIONS, ASSIGNEES, RISK_EXPIRY_DAYS, type ActionCall } from '../../shared/actions.js';
+import { detectInjection } from '../../shared/detectInjection.js';
+import type { Finding } from '../../shared/finding.js';
+import { PRIORITIES } from '../../shared/finding.js';
+import { Badge, Button, Field, inputClass, type Tone } from '../../ui/index.js';
 
 const STATE: Record<Proposal['state'], [string, Tone]> = {
   pending: ['Awaiting your review', 'warn'],

@@ -1,6 +1,6 @@
-import type { AssistRequest } from '../shared/assist.ts';
-import { createSseParser, type ErrorCode, type StreamEvent } from '../shared/stream.ts';
-import type { AssistantProvider } from './provider.ts';
+import type { AssistRequest } from '../shared/assist.js';
+import { createSseParser, type ErrorCode, type StreamEvent } from '../shared/stream.js';
+import type { AssistantProvider } from './provider.js';
 
 export class ProviderUnavailableError extends Error {
   constructor() {

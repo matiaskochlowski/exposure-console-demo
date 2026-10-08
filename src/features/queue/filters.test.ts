@@ -1,8 +1,8 @@
 import { describe, expect, it } from 'vitest';
-import { enrichForTest, toRow } from '../../data/findings.ts';
-import { generateFindings } from '../../shared/generate.ts';
-import { csvCell, toCsv } from './csv.ts';
-import { DEFAULT_FILTERS, parseFilters, selectRows, serializeFilters } from './filters.ts';
+import { enrichForTest, toRow } from '../../data/findings.js';
+import { generateFindings } from '../../shared/generate.js';
+import { csvCell, toCsv } from './csv.js';
+import { DEFAULT_FILTERS, parseFilters, selectRows, serializeFilters } from './filters.js';
 
 const rows = enrichForTest(generateFindings(2000)).map((r) => toRow(r));
 

@@ -1,9 +1,9 @@
 import { describe, expect, it } from 'vitest';
-import type { ActionCall } from '../shared/actions.ts';
-import type { Finding } from '../shared/finding.ts';
-import { generateFindings } from '../shared/generate.ts';
-import { addProposal, approveProposal, rejectProposal } from './executor.ts';
-import { EMPTY_STATE, type ActionsState } from './types.ts';
+import type { ActionCall } from '../shared/actions.js';
+import type { Finding } from '../shared/finding.js';
+import { generateFindings } from '../shared/generate.js';
+import { addProposal, approveProposal, rejectProposal } from './executor.js';
+import { EMPTY_STATE, type ActionsState } from './types.js';
 
 const base: Finding = { ...generateFindings(1)[0]!, status: 'open' };
 const getBase = (id: string) => (id === base.id ? base : undefined);

@@ -3,9 +3,9 @@ import {
   assistRequestSchema,
   buildFindingContext,
   clientStateSchema,
-} from '../../src/shared/assist.ts';
-import { findFindingById } from '../../src/shared/generate.ts';
-import { encodeSse, type ErrorCode, type StreamEvent } from '../../src/shared/stream.ts';
+} from '../../src/shared/assist.js';
+import { findFindingById } from '../../src/shared/generate.js';
+import { encodeSse, type ErrorCode, type StreamEvent } from '../../src/shared/stream.js';
 
 export function jsonError(status: number, code: ErrorCode, message: string): Response {
   return Response.json(

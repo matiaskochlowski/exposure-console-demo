@@ -1,5 +1,5 @@
 import { expect, test } from '@playwright/test';
-import { expectNoA11yViolations, findings, freshPage } from './fixtures.ts';
+import { expectNoA11yViolations, findings, freshPage } from './fixtures.js';
 
 // Automated checks cover a subset of WCAG; keyboard paths are in queue.spec.ts and manual
 // screen-reader notes live in docs/BUILD-LOG.md.

@@ -1,7 +1,7 @@
 import { z } from 'zod';
-import { ACTIONS, ACTION_NAMES } from '../../src/shared/actions.ts';
-import type { ChatTurn, FindingContext } from '../../src/shared/assist.ts';
-import { redact } from '../../src/shared/redact.ts';
+import { ACTIONS, ACTION_NAMES } from '../../src/shared/actions.js';
+import type { ChatTurn, FindingContext } from '../../src/shared/assist.js';
+import { redact } from '../../src/shared/redact.js';
 
 export const SYSTEM_PROMPT = `You are the analyst inside an exposure-management console. You explain one security finding to a practitioner and may PROPOSE at most one action with the provided tools. A person reviews every proposal; nothing runs until they approve it.
 

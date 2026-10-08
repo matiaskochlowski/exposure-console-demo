@@ -1,4 +1,4 @@
-import type { Row } from '../../data/findings.ts';
+import type { Row } from '../../data/findings.js';
 
 /**
  * CSV export with formula-injection protection: scanner-derived cells that start with = + - @ (or

@@ -1,9 +1,9 @@
 import { useSyncExternalStore } from 'react';
-import type { ActionCall } from '../shared/actions.ts';
-import type { Finding } from '../shared/finding.ts';
-import { addProposal, approveProposal, rejectProposal, type ExecuteResult } from './executor.ts';
-import { parseActionsState } from './schema.ts';
-import { EMPTY_STATE, type ActionsState } from './types.ts';
+import type { ActionCall } from '../shared/actions.js';
+import type { Finding } from '../shared/finding.js';
+import { addProposal, approveProposal, rejectProposal, type ExecuteResult } from './executor.js';
+import { parseActionsState } from './schema.js';
+import { EMPTY_STATE, type ActionsState } from './types.js';
 
 const STORAGE_KEY = 'exposure-console:actions:v1';
 

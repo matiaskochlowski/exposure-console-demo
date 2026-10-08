@@ -1,4 +1,4 @@
-import type { Environment, Finding, Status } from './finding.ts';
+import type { Environment, Finding, Status } from './finding.js';
 
 /**
  * Deterministic synthetic dataset. The browser loads it as /data/findings.json (written by

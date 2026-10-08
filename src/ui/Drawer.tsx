@@ -1,5 +1,5 @@
 import { useEffect, useId, useRef, type ReactNode } from 'react';
-import { Button } from './Button.tsx';
+import { Button } from './Button.js';
 
 interface DrawerProps {
   title: ReactNode;

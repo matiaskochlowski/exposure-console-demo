@@ -1,14 +1,14 @@
 import { useCallback, useId, useRef, useState } from 'react';
-import { useActionsState } from '../../actions/store.ts';
-import type { AssistantProvider } from '../../ai/provider.ts';
-import type { Row } from '../../data/findings.ts';
-import type { ClientState } from '../../shared/assist.ts';
-import type { Finding } from '../../shared/finding.ts';
-import { Badge, Button, cx, inputClass } from '../../ui/index.ts';
-import { PayloadPreview } from './PayloadPreview.tsx';
-import { ProposalCard } from './ProposalCard.tsx';
-import { SafeMarkdown } from './SafeMarkdown.tsx';
-import { useAssistant, type Turn } from './useAssistant.ts';
+import { useActionsState } from '../../actions/store.js';
+import type { AssistantProvider } from '../../ai/provider.js';
+import type { Row } from '../../data/findings.js';
+import type { ClientState } from '../../shared/assist.js';
+import type { Finding } from '../../shared/finding.js';
+import { Badge, Button, cx, inputClass } from '../../ui/index.js';
+import { PayloadPreview } from './PayloadPreview.js';
+import { ProposalCard } from './ProposalCard.js';
+import { SafeMarkdown } from './SafeMarkdown.js';
+import { useAssistant, type Turn } from './useAssistant.js';
 
 const SUGGESTIONS = [
   'What should we do about this?',
