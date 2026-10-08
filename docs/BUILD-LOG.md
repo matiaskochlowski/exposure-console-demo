@@ -172,6 +172,7 @@ The dummy `.env.local` used in these runs held no real secret and was deleted af
   have un-tracked the example file, so it was reverted. The link step also wrote a `.env.local` with a
   Vercel OIDC token. It was deleted, and previews were deployed from a clean `git archive` export, so
   only committed files were uploaded.
+- **After merge**, the full Chromium + mobile E2E suite also passed against the production URL (`BASE_URL=… npx playwright test`).
 - **Checked on the preview:**
   - `/api/assist` returns `503 provider_unavailable`
   - the preview endpoint returns the redacted context
@@ -181,15 +182,15 @@ The dummy `.env.local` used in these runs held no real secret and was deleted af
 
 ## 10. Results
 
-| Gate                                          | Result                                                    |
-| --------------------------------------------- | --------------------------------------------------------- |
-| Unit + contract tests (Vitest)                | 146 passed                                                |
-| Hook tests (`node:test`)                      | 11 passed                                                 |
-| E2E + axe + perf (Chromium desktop + Pixel 7) | 48 passed, 1 skipped (CVSS column hidden on mobile)       |
-| E2E on Firefox + WebKit (local run)           | 46 passed, 2 skipped (perf needs Chromium CPU throttling) |
-| Initial JS                                    | ~131 KiB gzip (budget 250)                                |
-| Filter-to-render, 10k rows, 4× CPU            | median ~48 ms (budget 200)                                |
-| `npm audit`                                   | 0 vulnerabilities                                         |
+| Gate                                          | Result                                                                            |
+| --------------------------------------------- | --------------------------------------------------------------------------------- |
+| Unit + contract tests (Vitest)                | 146 passed                                                                        |
+| Hook tests (`node:test`)                      | 11 passed                                                                         |
+| E2E + axe + perf (Chromium desktop + Pixel 7) | 44 passed, 1 skipped (CVSS column hidden on mobile), in CI and against production |
+| E2E on Firefox + WebKit (local run)           | 46 passed, 2 skipped (perf needs Chromium CPU throttling)                         |
+| Initial JS                                    | ~131 KiB gzip (budget 250)                                                        |
+| Filter-to-render, 10k rows, 4× CPU            | median ~48 ms (budget 200)                                                        |
+| `npm audit`                                   | 0 vulnerabilities                                                                 |
 
 **Not done yet (honest gaps):**
 
