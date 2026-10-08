@@ -1,0 +1,147 @@
+@import 'tailwindcss';
+
+/*
+ * Design tokens. Components use only the semantic utilities generated from @theme below
+ * (bg-surface, text-muted, border-line, bg-p1-soft...), never raw colours, so both themes stay in sync.
+ */
+:root {
+  color-scheme: light;
+  --bg: #f6f7f9;
+  --surface: #ffffff;
+  --surface-2: #f0f2f5;
+  --line: #d9dee5;
+  --text: #0f172a;
+  --muted: #4b5565;
+  --accent: #0b63ce;
+  --accent-fg: #ffffff;
+  --focus: #0b63ce;
+  --p1: #b42318;
+  --p1-soft: #fde8e7;
+  --p2: #b54708;
+  --p2-soft: #fdeedc;
+  --p3: #8a6100;
+  --p3-soft: #fbf3d6;
+  --p4: #475467;
+  --p4-soft: #eaecf0;
+  --ok: #067647;
+  --ok-soft: #dcf5e7;
+  --warn: #8a4b00;
+  --warn-soft: #fff3d6;
+  --danger: #b42318;
+  --danger-soft: #fde8e7;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme='light']) {
+    color-scheme: dark;
+    --bg: #0b1016;
+    --surface: #121922;
+    --surface-2: #1a2330;
+    --line: #2b3746;
+    --text: #e6edf5;
+    --muted: #9aa8b8;
+    --accent: #5aa9ff;
+    --accent-fg: #06121f;
+    --focus: #7cbcff;
+    --p1: #ff8a80;
+    --p1-soft: #3a1714;
+    --p2: #ffb168;
+    --p2-soft: #3a2410;
+    --p3: #f2cf5b;
+    --p3-soft: #33290c;
+    --p4: #b4c0cf;
+    --p4-soft: #232d3a;
+    --ok: #63d69b;
+    --ok-soft: #0f2e20;
+    --warn: #f7c46c;
+    --warn-soft: #33260d;
+    --danger: #ff8a80;
+    --danger-soft: #3a1714;
+  }
+}
+
+:root[data-theme='dark'] {
+  color-scheme: dark;
+  --bg: #0b1016;
+  --surface: #121922;
+  --surface-2: #1a2330;
+  --line: #2b3746;
+  --text: #e6edf5;
+  --muted: #9aa8b8;
+  --accent: #5aa9ff;
+  --accent-fg: #06121f;
+  --focus: #7cbcff;
+  --p1: #ff8a80;
+  --p1-soft: #3a1714;
+  --p2: #ffb168;
+  --p2-soft: #3a2410;
+  --p3: #f2cf5b;
+  --p3-soft: #33290c;
+  --p4: #b4c0cf;
+  --p4-soft: #232d3a;
+  --ok: #63d69b;
+  --ok-soft: #0f2e20;
+  --warn: #f7c46c;
+  --warn-soft: #33260d;
+  --danger: #ff8a80;
+  --danger-soft: #3a1714;
+}
+
+@theme inline {
+  --color-bg: var(--bg);
+  --color-surface: var(--surface);
+  --color-surface-2: var(--surface-2);
+  --color-line: var(--line);
+  --color-fg: var(--text);
+  --color-muted: var(--muted);
+  --color-accent: var(--accent);
+  --color-accent-fg: var(--accent-fg);
+  --color-p1: var(--p1);
+  --color-p1-soft: var(--p1-soft);
+  --color-p2: var(--p2);
+  --color-p2-soft: var(--p2-soft);
+  --color-p3: var(--p3);
+  --color-p3-soft: var(--p3-soft);
+  --color-p4: var(--p4);
+  --color-p4-soft: var(--p4-soft);
+  --color-ok: var(--ok);
+  --color-ok-soft: var(--ok-soft);
+  --color-warn: var(--warn);
+  --color-warn-soft: var(--warn-soft);
+  --color-danger: var(--danger);
+  --color-danger-soft: var(--danger-soft);
+  --font-sans: 'Inter', ui-sans-serif, system-ui, -apple-system, 'Segoe UI', sans-serif;
+  --font-mono: ui-monospace, 'SF Mono', Menlo, Consolas, monospace;
+}
+
+html,
+body,
+#root {
+  height: 100%;
+}
+
+body {
+  background: var(--bg);
+  color: var(--text);
+  font-family: var(--font-sans);
+  -webkit-font-smoothing: antialiased;
+}
+
+:focus-visible {
+  outline: 2px solid var(--focus);
+  outline-offset: 2px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+dialog::backdrop {
+  background: rgb(5 10 20 / 0.45);
+}
