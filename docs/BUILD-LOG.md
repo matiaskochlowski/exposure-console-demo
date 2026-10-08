@@ -160,7 +160,26 @@ Headless `claude -p` runs inside the repo:
 
 The dummy `.env.local` used in these runs held no real secret and was deleted afterwards.
 
-## 9. Results
+## 9. First deployment
+
+- **The first preview built "Ready" but every function call failed** with
+  `FUNCTION_INVOCATION_FAILED`. Vercel compiles `api/` and `src/shared/` file by file to Node ESM and
+  kept the `.ts` import specifiers, which Node cannot resolve. That had been flagged as a risk in the
+  plan; the deployed check confirmed it. The fix was to switch the repo to `.js` specifiers, which
+  TypeScript, Vite, Vitest, tsx and Playwright map back to the `.ts` sources. The decision is
+  recorded in `docs/conventions.md`.
+- **`vercel link` appended `.env*` to `.gitignore`.** After the `!.env.example` exception, that would
+  have un-tracked the example file, so it was reverted. The link step also wrote a `.env.local` with a
+  Vercel OIDC token. It was deleted, and previews were deployed from a clean `git archive` export, so
+  only committed files were uploaded.
+- **Checked on the preview:**
+  - `/api/assist` returns `503 provider_unavailable`
+  - the preview endpoint returns the redacted context
+  - `text/plain` is refused with `415`
+  - SPA deep links return `200`
+  - the CSP and frame headers are present
+
+## 10. Results
 
 | Gate                                          | Result                                                    |
 | --------------------------------------------- | --------------------------------------------------------- |
