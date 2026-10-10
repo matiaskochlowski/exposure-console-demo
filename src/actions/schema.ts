@@ -26,8 +26,8 @@ const proposalSchema = z.strictObject({
 });
 
 const auditSchema = z.strictObject({
-  at: z.string(),
-  findingId: z.string(),
+  at: z.string().max(40),
+  findingId: z.string().max(20),
   proposalId: z.string().optional(),
   summary: z.string().max(1000),
   actor: z.enum(['analyst (approved by you)', 'you']),

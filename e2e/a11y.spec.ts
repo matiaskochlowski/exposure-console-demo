@@ -1,5 +1,5 @@
 import { expect, test } from '@playwright/test';
-import { expectNoA11yViolations, findings, freshPage } from './fixtures.js';
+import { expectNoA11yViolations, findings, freshPage, toggleFilter } from './fixtures.js';
 
 // Automated checks cover a subset of WCAG; keyboard paths are in queue.spec.ts and manual
 // screen-reader notes live in docs/BUILD-LOG.md.
@@ -10,9 +10,11 @@ for (const theme of ['light', 'dark'] as const) {
     test('queue (default and filtered)', async ({ page }) => {
       await freshPage(page);
       await expectNoA11yViolations(page, 'queue default');
-      await page.getByRole('button', { name: 'P1', exact: true }).click();
-      await page.getByRole('button', { name: 'Known exploited' }).click();
+      await toggleFilter(page, 'Priority', 'P1');
+      await toggleFilter(page, 'Signals', 'Known exploited');
       await expectNoA11yViolations(page, 'queue filtered');
+      await page.getByRole('button', { name: /^Status/ }).click();
+      await expectNoA11yViolations(page, 'filter dropdown open');
     });
 
     test('drawer with analyst answer and pending proposal', async ({ page }) => {

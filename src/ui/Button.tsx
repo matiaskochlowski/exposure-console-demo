@@ -1,12 +1,13 @@
 import type { ComponentProps } from 'react';
 import { cx } from './cx.js';
 
-type Variant = 'primary' | 'secondary' | 'ghost' | 'danger';
+type Variant = 'primary' | 'accent' | 'secondary' | 'ghost' | 'danger';
 type Size = 'sm' | 'md';
 
 const VARIANTS: Record<Variant, string> = {
-  primary: 'bg-accent text-accent-fg hover:opacity-90',
-  secondary: 'border border-line bg-surface text-fg hover:bg-surface-2',
+  primary: 'bg-cta text-cta-fg hover:opacity-90',
+  accent: 'bg-accent text-accent-fg hover:opacity-90',
+  secondary: 'border border-accent/40 bg-surface text-accent hover:bg-surface-2',
   ghost: 'text-fg hover:bg-surface-2',
   danger: 'border border-line bg-surface text-danger hover:bg-danger-soft',
 };
@@ -32,7 +33,7 @@ export function Button({
     <button
       type={type}
       className={cx(
-        'inline-flex shrink-0 items-center justify-center rounded-md font-medium transition-colors disabled:cursor-not-allowed disabled:opacity-50',
+        'inline-flex shrink-0 items-center justify-center rounded-lg font-semibold transition-colors disabled:cursor-not-allowed disabled:opacity-50',
         VARIANTS[variant],
         SIZES[size],
         className,

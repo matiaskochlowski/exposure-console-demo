@@ -1,6 +1,6 @@
 # Exposure Console
 
-A front-end demo of an **exposure-management triage console**: a 10,000-finding risk queue, a
+A front-end demo of an **exposure-management triage console**: a 1,200-finding risk queue, a
 finding drawer, and an **AI analyst that proposes actions a person must approve**. It was built
 end-to-end with **Claude Code**, and the repository is laid out the way an AI-enabled team would
 run it: agent instructions, skills, subagents, hooks, permissions, MCP config, ADRs and a build log.
@@ -33,7 +33,7 @@ platform. Tickets and risk decisions are simulated, and all data is generated.
 
 | Requirement                              | Where to look                                                                                                                                                                                                                                                                   |
 | ---------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| Fast, data-heavy React UI                | Virtualised **native `<table>`** over 10k rows (≤ 40 rows in the DOM), deferred filtering, memoised rows, lazy drawer chunk. Filter-to-render has a **median of about 48 ms at 4× CPU throttle** (`e2e/perf.spec.ts`, [`docs/perf.md`](docs/perf.md))                           |
+| Fast, data-heavy React UI                | Virtualised **native `<table>`** over 1.2k rows (≤ 50 rows in the DOM), deferred filtering, memoised rows, lazy drawer chunk. Filter-to-render has a **median of about 24 ms at 4× CPU throttle** (`e2e/perf.spec.ts`, [`docs/perf.md`](docs/perf.md))                          |
 | Accessible by default                    | Roving-tabindex table with `aria-rowcount`/`aria-sort`, native `<dialog>` drawer with focus return, polite live regions, light/dark tokens. **axe-clean in 5 named states × 2 themes × desktop/mobile**, plus a keyboard-only E2E path                                          |
 | Responsive / cross-device                | Mobile-first layout, Playwright on desktop Chromium and Pixel 7 in CI; Firefox and WebKit pass locally                                                                                                                                                                          |
 | Reusable component library               | `src/ui/` primitives (Button, Badge/PriorityBadge/StatusBadge, Drawer, Field, Toast) on design tokens in `src/index.css`                                                                                                                                                        |

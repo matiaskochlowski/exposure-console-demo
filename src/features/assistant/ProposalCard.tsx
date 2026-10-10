@@ -248,7 +248,7 @@ export function ProposalCard({
         >
           <EditFields call={proposal.current} draft={draft} setDraft={setDraft} issues={issues} />
           <div className="flex flex-wrap gap-2">
-            <Button type="submit" variant="primary" size="sm">
+            <Button type="submit" variant="accent" size="sm">
               Approve edited action
             </Button>
             <Button size="sm" variant="ghost" onClick={cancelEdit}>
@@ -272,7 +272,7 @@ export function ProposalCard({
 
       {pending && !editing && (
         <div className="mt-3 flex flex-wrap gap-2">
-          <Button variant="primary" size="sm" onClick={approve}>
+          <Button variant="accent" size="sm" onClick={approve}>
             Approve
           </Button>
           <Button

@@ -33,6 +33,11 @@ The UI panel **“What the analyst receives”** shows the finding context exact
 server in live mode, or computed by the same function in mock mode (where nothing leaves the
 browser). The question and history are redacted by the same `redact()` before sending.
 
+The app-wide **Ask** chat (`src/features/chat/`) never calls a model: it answers concept questions
+from the static glossary in `src/features/concepts/concepts.ts`, so nothing typed there leaves the
+browser. "What does this mean?" inside a finding drawer instead sends a fixed template question
+(`What is <term>?`) to that finding's analyst, through the normal request path above.
+
 Redaction limits: bare hostnames without a domain (`db01`) are not detected, and time-like strings
 can be over-redacted as IPv6. Redaction errs towards withholding.
 

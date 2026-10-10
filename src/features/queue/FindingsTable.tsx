@@ -1,14 +1,27 @@
-import { useVirtualizer } from '@tanstack/react-virtual';
+import { ChevronDown, ChevronUp } from 'lucide-react';
 import { memo, useEffect, useRef, useState, type KeyboardEvent } from 'react';
 import type { Row } from '../../data/findings.js';
-import { Badge, PriorityBadge, StatusBadge, cx } from '../../ui/index.js';
+import {
+  DomainBadge,
+  EnvironmentBadge,
+  EvidenceChip,
+  PriorityBadge,
+  StatusBadge,
+  cx,
+} from '../../ui/index.js';
+import { ConceptHint } from '../concepts/ConceptHint.js';
+import type { ConceptId } from '../concepts/concepts.js';
 import type { Filters, SortKey } from './filters.js';
 
-const ROW_HEIGHT = 56;
 const HEADER_HEIGHT = 40;
 
 interface FindingsTableProps {
+  /** Rows on the current page. */
   rows: Row[];
+  /** Index of the first row of this page within all matching rows. */
+  offset: number;
+  /** All rows matching the filters, across pages. */
+  matchCount: number;
   totalCount: number;
   selected: ReadonlySet<string>;
   onToggle: (id: string) => void;
@@ -35,35 +48,73 @@ function SortHeader({
   dir,
   onSort,
   className,
+  hint,
 }: {
   label: string;
   sort: SortKey;
   dir: 'asc' | 'desc';
   onSort: (k: SortKey) => void;
   className?: string;
+  /** Concept explained by a "What does this mean?" button next to the label. */
+  hint?: ConceptId;
 }) {
   const key = SORTABLE[label];
   const active = key === sort;
   return (
     <th
       scope="col"
+      // The header's name is just the label: without this, screen readers would read the hint
+      // button ("What does CVSS mean?") as part of every cell's column header.
+      aria-label={hint ? label : undefined}
       aria-sort={active ? (dir === 'asc' ? 'ascending' : 'descending') : undefined}
       className={cx('px-3 text-left text-xs font-semibold text-muted', className)}
     >
-      {key ? (
-        <button
-          type="button"
-          onClick={() => onSort(key)}
-          className="inline-flex items-center gap-1 rounded hover:text-fg"
-        >
-          {label}
-          <span aria-hidden="true" className={cx('text-[10px]', !active && 'opacity-0')}>
-            {dir === 'asc' ? '▲' : '▼'}
-          </span>
-        </button>
-      ) : (
-        label
-      )}
+      <span className="inline-flex items-center gap-0.5">
+        {key ? (
+          <button
+            type="button"
+            onClick={() => onSort(key)}
+            className={cx(
+              'inline-flex items-center gap-1 rounded hover:text-fg',
+              active && 'text-accent',
+            )}
+          >
+            {label}
+            {dir === 'asc' && active ? (
+              <ChevronUp aria-hidden="true" className="size-3.5" />
+            ) : (
+              <ChevronDown aria-hidden="true" className={cx('size-3.5', !active && 'opacity-0')} />
+            )}
+          </button>
+        ) : (
+          label
+        )}
+        {hint && <ConceptHint id={hint} />}
+      </span>
+    </th>
+  );
+}
+
+/** Non-sortable header with a concept hint. */
+function HintHeader({
+  label,
+  hint,
+  className,
+}: {
+  label: string;
+  hint: ConceptId;
+  className: string;
+}) {
+  return (
+    <th
+      scope="col"
+      aria-label={label}
+      className={cx('px-3 text-left text-xs font-semibold text-muted', className)}
+    >
+      <span className="inline-flex items-center gap-0.5">
+        {label}
+        <ConceptHint id={hint} />
+      </span>
     </th>
   );
 }
@@ -71,6 +122,7 @@ function SortHeader({
 const FindingRow = memo(function FindingRow({
   row,
   index,
+  rowIndex,
   active,
   checked,
   onToggle,
@@ -79,6 +131,8 @@ const FindingRow = memo(function FindingRow({
 }: {
   row: Row;
   index: number;
+  /** 1-based position in the whole table including the header row. */
+  rowIndex: number;
   active: boolean;
   checked: boolean;
   onToggle: (id: string) => void;
@@ -89,12 +143,12 @@ const FindingRow = memo(function FindingRow({
     <tr
       data-index={index}
       data-id={row.id}
-      aria-rowindex={index + 2}
+      aria-rowindex={rowIndex}
       tabIndex={active ? 0 : -1}
       onFocus={() => onFocusRow(index)}
       onClick={() => onOpen(row.id)}
       className={cx(
-        'h-14 cursor-pointer border-b border-line outline-none hover:bg-surface-2 [&:focus-visible>td]:bg-surface-2 [&:focus-visible>td]:shadow-[inset_0_2px_0_var(--focus),inset_0_-2px_0_var(--focus)]',
+        'h-14 cursor-pointer border-b border-row-line outline-none hover:bg-surface-2 [&:focus-visible>td]:bg-surface-2 [&:focus-visible>td]:shadow-[inset_0_2px_0_var(--focus),inset_0_-2px_0_var(--focus)]',
         checked && 'bg-surface-2',
       )}
     >
@@ -109,7 +163,7 @@ const FindingRow = memo(function FindingRow({
         />
       </td>
       <td className="max-w-0 px-3">
-        <div className="truncate text-sm font-medium text-fg">
+        <div className="truncate text-sm font-bold text-fg">
           {row.title}
           {checked && <span className="sr-only">, selected</span>}
         </div>
@@ -120,18 +174,28 @@ const FindingRow = memo(function FindingRow({
       <td className="px-3">
         <PriorityBadge priority={row.priority} overridden={row.priorityOverridden} />
       </td>
-      <td className="hidden px-3 text-sm tabular-nums md:table-cell">{row.riskScore.toFixed(2)}</td>
+      <td className="hidden px-3 md:table-cell">
+        <span className="inline-flex h-6 items-center rounded-sm bg-chip px-1.5 text-xs font-bold text-chip-fg tabular-nums">
+          {row.riskScore.toFixed(2)}
+        </span>
+      </td>
       <td className="hidden px-3 text-sm tabular-nums lg:table-cell">{row.cvss.toFixed(1)}</td>
       <td className="hidden px-3 text-sm tabular-nums lg:table-cell">
         {(row.epss * 100).toFixed(1)}%
       </td>
       <td className="hidden px-3 md:table-cell">
         <div className="flex gap-1">
-          {row.kev && <Badge tone="danger">KEV</Badge>}
-          {row.exploitValidated && <Badge tone="warn">Validated</Badge>}
+          {row.kev && <EvidenceChip short="KEV" label="Known exploited" />}
+          {row.exploitValidated && <EvidenceChip short="Ex" label="Exploit validated" />}
         </div>
       </td>
-      <td className="hidden px-3 text-sm text-muted xl:table-cell">{row.firstSeen}</td>
+      <td className="hidden px-3 xl:table-cell">
+        <div className="flex flex-col items-start gap-0.5">
+          <EnvironmentBadge environment={row.environment} />
+          <DomainBadge domain={row.domain} />
+        </div>
+      </td>
+      <td className="hidden px-3 text-sm text-muted 2xl:table-cell">{row.firstSeen}</td>
       <td className="px-3">
         <div className="flex flex-col items-start gap-0.5">
           <StatusBadge status={row.effectiveStatus} />
@@ -143,12 +207,14 @@ const FindingRow = memo(function FindingRow({
 });
 
 /**
- * Native <table> virtualised with spacer rows: only ~visible rows are in the DOM, yet the table
- * keeps real table semantics (headers, aria-rowcount/rowindex) for assistive tech. Rows use a roving
- * tabindex: Tab enters the table once, arrows move, Enter opens, Space selects.
+ * Native <table> showing one page of rows, with real table semantics (headers,
+ * aria-rowcount/rowindex across pages). Rows use a roving tabindex: Tab enters the table once,
+ * arrows move, Enter opens, Space selects.
  */
 export function FindingsTable({
   rows,
+  offset,
+  matchCount,
   totalCount,
   selected,
   onToggle,
@@ -162,15 +228,6 @@ export function FindingsTable({
   const scrollRef = useRef<HTMLDivElement>(null);
   const headerCheckbox = useRef<HTMLInputElement>(null);
   const [activeIndex, setActiveIndex] = useState(0);
-  const virtualizer = useVirtualizer({
-    count: rows.length,
-    getScrollElement: () => scrollRef.current,
-    estimateSize: () => ROW_HEIGHT,
-    overscan: 8,
-    scrollPaddingStart: HEADER_HEIGHT,
-    initialRect: { width: 1024, height: 640 },
-  });
-
   const selectedVisible = rows.reduce((n, r) => n + (selected.has(r.id) ? 1 : 0), 0);
   const allChecked = rows.length > 0 && selectedVisible === rows.length;
   useEffect(() => {
@@ -184,26 +241,29 @@ export function FindingsTable({
   const focusRow = (index: number) => {
     const clamped = Math.max(0, Math.min(rows.length - 1, index));
     setActiveIndex(clamped);
-    virtualizer.scrollToIndex(clamped, { align: 'auto' });
-    // The row may only exist after the virtualizer re-renders.
-    requestAnimationFrame(() => {
-      scrollRef.current
-        ?.querySelector<HTMLElement>(`tr[data-index="${clamped}"]`)
-        ?.focus({ preventScroll: true });
-    });
+    scrollRef.current
+      ?.querySelector<HTMLElement>(`tr[data-index="${clamped}"]`)
+      ?.focus({ preventScroll: false });
   };
 
+  // After the drawer closes: focus the row, waiting for its page to render if it is on another one.
+  const pending = useRef<string | undefined>(undefined);
   useEffect(() => {
-    if (!focusRequest) return;
-    const index = rows.findIndex((r) => r.id === focusRequest.id);
-    if (index >= 0) focusRow(index);
-    // Only when a new request arrives (drawer closed), not on every rows change.
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+    if (focusRequest) pending.current = focusRequest.id;
   }, [focusRequest]);
+  useEffect(() => {
+    if (!pending.current) return;
+    const index = rows.findIndex((r) => r.id === pending.current);
+    if (index < 0) return;
+    pending.current = undefined;
+    focusRow(index);
+    // focusRow only touches refs and state setters.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [focusRequest, rows]);
 
   const onKeyDown = (event: KeyboardEvent<HTMLTableSectionElement>) => {
     const row = rows[safeActive];
-    const page = Math.max(1, Math.floor((scrollRef.current?.clientHeight ?? 400) / ROW_HEIGHT) - 1);
+    const page = 10;
     const moves: Record<string, number> = {
       ArrowDown: 1,
       ArrowUp: -1,
@@ -219,19 +279,10 @@ export function FindingsTable({
     event.preventDefault();
   };
 
-  const items = virtualizer.getVirtualItems();
-  // If the roving row scrolled out of the rendered window, make the first rendered row the Tab stop,
-  // otherwise Tab would skip the table entirely (code-reviewer finding).
-  const tabStop = items.some((i) => i.index === safeActive) ? safeActive : (items[0]?.index ?? 0);
-  const paddingTop = items[0]?.start ?? 0;
-  const paddingBottom = virtualizer.getTotalSize() - (items.at(-1)?.end ?? 0);
-
   return (
-    // overflow-anchor: none — otherwise the browser's scroll anchoring "compensates" when the top
-    // spacer row grows and doubles every programmatic jump (found via e2e: focus restore landed ~2× too far).
     <div
       ref={scrollRef}
-      className="min-h-0 flex-1 overflow-auto [overflow-anchor:none] [scroll-padding-top:40px]"
+      className="relative min-h-0 flex-1 overflow-auto [scroll-padding-top:40px] [scroll-padding-bottom:64px]"
       data-testid="queue-scroll"
     >
       <p id="findings-keys" className="sr-only">
@@ -242,7 +293,7 @@ export function FindingsTable({
         className="w-full table-fixed border-collapse"
         aria-label="Findings"
         aria-describedby="findings-keys"
-        aria-rowcount={rows.length + 1}
+        aria-rowcount={matchCount + 1}
       >
         <thead className="sticky top-0 z-10 bg-surface shadow-[0_1px_0_var(--line)]">
           <tr aria-rowindex={1} style={{ height: HEADER_HEIGHT }}>
@@ -252,87 +303,69 @@ export function FindingsTable({
                 type="checkbox"
                 checked={allChecked}
                 onChange={(e) => onToggleAll(e.target.checked)}
-                aria-label={`Select all ${rows.length} matching findings`}
+                aria-label={`Select all ${rows.length} findings on this page`}
                 className="size-4 accent-[var(--accent)]"
               />
             </th>
             <SortHeader label="Finding" sort={sort} dir={dir} onSort={onSort} />
-            <th
-              scope="col"
-              className="w-16 px-3 text-left text-xs font-semibold text-muted sm:w-20"
-            >
-              Priority
-            </th>
+            <HintHeader label="Priority" hint="priority" className="w-20 sm:w-24" />
             <SortHeader
               label="Risk"
+              hint="risk"
               sort={sort}
               dir={dir}
               onSort={onSort}
-              className="hidden w-20 md:table-cell"
+              className="hidden w-24 md:table-cell"
             />
             <SortHeader
               label="CVSS"
+              hint="cvss"
               sort={sort}
               dir={dir}
               onSort={onSort}
-              className="hidden w-20 lg:table-cell"
+              className="hidden w-24 lg:table-cell"
             />
             <SortHeader
               label="EPSS"
+              hint="epss"
               sort={sort}
               dir={dir}
               onSort={onSort}
-              className="hidden w-20 lg:table-cell"
+              className="hidden w-24 lg:table-cell"
             />
+            <HintHeader label="Exploitation" hint="kev" className="hidden w-28 md:table-cell" />
             <th
               scope="col"
-              className="hidden w-40 px-3 text-left text-xs font-semibold text-muted md:table-cell"
+              className="hidden w-36 px-3 text-left text-xs font-semibold text-muted xl:table-cell"
             >
-              Exploitation
+              Environment / domain
             </th>
             <SortHeader
               label="First seen"
               sort={sort}
               dir={dir}
               onSort={onSort}
-              className="hidden w-28 xl:table-cell"
+              className="hidden w-28 2xl:table-cell"
             />
-            <th
-              scope="col"
-              className="w-28 px-3 text-left text-xs font-semibold text-muted sm:w-32"
-            >
-              Status
-            </th>
+            <HintHeader label="Status" hint="status" className="w-28 sm:w-32" />
           </tr>
         </thead>
         {/* Keyboard handling is delegated from the focusable rows (roving tabindex) to their tbody. */}
         {/* eslint-disable-next-line jsx-a11y/no-noninteractive-element-interactions */}
         <tbody onKeyDown={onKeyDown}>
-          {paddingTop > 0 && (
-            <tr aria-hidden="true">
-              <td style={{ height: paddingTop, padding: 0 }} />
-            </tr>
-          )}
-          {items.map((item) => {
-            const row = rows[item.index]!;
-            return (
-              <FindingRow
-                key={row.id}
-                row={row}
-                index={item.index}
-                active={item.index === tabStop}
-                checked={selected.has(row.id)}
-                onToggle={onToggle}
-                onOpen={onOpen}
-                onFocusRow={setActiveIndex}
-              />
-            );
-          })}
-          {paddingBottom > 0 && (
-            <tr aria-hidden="true">
-              <td style={{ height: paddingBottom, padding: 0 }} />
-            </tr>
-          )}
+          {rows.map((row, index) => (
+            <FindingRow
+              key={row.id}
+              row={row}
+              index={index}
+              rowIndex={offset + index + 2}
+              active={index === safeActive}
+              checked={selected.has(row.id)}
+              onToggle={onToggle}
+              onOpen={onOpen}
+              onFocusRow={setActiveIndex}
+            />
+          ))}
         </tbody>
       </table>
       {rows.length === 0 && (

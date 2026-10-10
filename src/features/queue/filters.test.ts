@@ -38,6 +38,15 @@ describe('selectRows', () => {
     expect(out.every((r) => (r.priority === 'P1' || r.priority === 'P2') && r.kev)).toBe(true);
   });
 
+  it('filters by environment and domain together, and drops unknown domains from the URL', () => {
+    const filters = parseFilters(new URLSearchParams('domain=payments,bogus&env=production'));
+    expect(filters.domain).toEqual(['payments']);
+    expect(serializeFilters(filters).toString()).toBe('env=production&domain=payments');
+    const out = selectRows(rows, filters);
+    expect(out.length).toBeGreaterThan(0);
+    expect(out.every((r) => r.domain === 'payments' && r.environment === 'production')).toBe(true);
+  });
+
   it('searches id, title, CWE and hostname case-insensitively', () => {
     const target = rows[42]!;
     expect(selectRows(rows, { ...DEFAULT_FILTERS, q: target.id.toLowerCase() })).toEqual([target]);

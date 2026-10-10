@@ -38,7 +38,7 @@ export function Field({ label, error, hint, children }: FieldProps) {
 
 /** Control styling without width, for inline controls such as filter selects. */
 export const controlClass =
-  'rounded-md border border-line bg-surface px-2.5 py-1.5 text-sm text-fg placeholder:text-muted aria-[invalid=true]:border-danger';
+  'rounded-lg border border-line bg-surface px-2.5 py-1.5 text-sm text-fg placeholder:text-muted focus:border-accent aria-[invalid=true]:border-danger';
 
 export const inputClass =
-  'w-full rounded-md border border-line bg-surface px-2.5 py-1.5 text-sm text-fg placeholder:text-muted aria-[invalid=true]:border-danger';
+  'w-full rounded-lg border border-line bg-surface px-2.5 py-1.5 text-sm text-fg placeholder:text-muted focus:border-accent aria-[invalid=true]:border-danger';

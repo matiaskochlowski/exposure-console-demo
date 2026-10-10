@@ -15,7 +15,7 @@ export const findings = {
 };
 
 /** Fresh state for every test: no persisted actions, intro dismissed, reduced motion. */
-export async function freshPage(page: Page, path = '/') {
+export async function freshPage(page: Page, path = '/exposures') {
   await page.addInitScript(() => {
     if (!sessionStorage.getItem('e2e-init')) {
       localStorage.clear();
@@ -40,4 +40,11 @@ export async function expectNoA11yViolations(page: Page, state: string) {
         .join(', ')}`,
   );
   expect(summary, `axe violations in state "${state}"`).toEqual([]);
+}
+
+/** Open a filter dropdown (e.g. Priority) and tick or untick one option, then close it again. */
+export async function toggleFilter(page: Page, group: string, option: string) {
+  await page.getByRole('button', { name: new RegExp(`^${group}`) }).click();
+  await page.getByRole('group', { name: group }).locator('label', { hasText: option }).click();
+  await page.keyboard.press('Escape');
 }

@@ -1,3 +1,4 @@
+import { X } from 'lucide-react';
 import { useEffect, useId, useRef, type ReactNode } from 'react';
 import { Button } from './Button.js';
 
@@ -54,7 +55,7 @@ export function Drawer({ title, subtitle, onClose, children }: DrawerProps) {
       }}
     >
       <div className="flex h-full flex-col">
-        <header className="flex items-start gap-3 border-b border-line px-4 py-3 sm:px-6">
+        <header className="flex items-start gap-3 border-b-2 border-accent px-4 py-3 sm:px-6">
           <div className="min-w-0 flex-1">
             <h2 id={titleId} className="text-base font-semibold sm:text-lg">
               {title}
@@ -62,9 +63,7 @@ export function Drawer({ title, subtitle, onClose, children }: DrawerProps) {
             {subtitle && <div className="mt-1 text-sm text-muted">{subtitle}</div>}
           </div>
           <Button variant="ghost" size="sm" onClick={onClose} aria-label="Close details">
-            <span aria-hidden="true" className="text-lg leading-none">
-              ×
-            </span>
+            <X aria-hidden="true" className="size-4" />
           </Button>
         </header>
         <div className="min-h-0 flex-1 overflow-y-auto">{children}</div>

@@ -23,6 +23,7 @@ const COLUMNS: Array<[string, (r: Row) => unknown]> = [
   ['ticket', (r) => r.ticketId],
   ['hostname', (r) => r.hostname],
   ['environment', (r) => r.environment],
+  ['domain', (r) => r.domain],
   ['scanner_text', (r) => r.scannerText],
 ];
 

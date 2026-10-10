@@ -1,3 +1,4 @@
+import { Download } from 'lucide-react';
 import { use, useCallback, useDeferredValue, useEffect, useMemo, useRef, useState } from 'react';
 import { Outlet, useLocation, useMatch, useNavigate, useSearchParams } from 'react-router';
 import { loadDataset } from '../../data/findings.js';
@@ -8,6 +9,8 @@ import { toCsv } from './csv.js';
 import { FilterBar } from './FilterBar.js';
 import {
   DEFAULT_FILTERS,
+  PAGE_SIZE,
+  pageCount,
   parseFilters,
   selectRows,
   serializeFilters,
@@ -15,6 +18,7 @@ import {
   type SortKey,
 } from './filters.js';
 import { FindingsTable } from './FindingsTable.js';
+import { Pagination } from './Pagination.js';
 
 function download(name: string, content: string) {
   const url = URL.createObjectURL(new Blob([content], { type: 'text/csv;charset=utf-8' }));
@@ -29,20 +33,27 @@ export default function QueuePage() {
   const [searchParams, setSearchParams] = useSearchParams();
   const navigate = useNavigate();
   const location = useLocation();
-  const openMatch = useMatch('/findings/:id');
+  const openMatch = useMatch('/exposures/findings/:id');
   const openId = openMatch?.params.id;
 
   const paramsKey = searchParams.toString();
   // eslint-disable-next-line react-hooks/exhaustive-deps
   const filters = useMemo(() => parseFilters(searchParams), [paramsKey]);
-  // Typing and chip clicks render immediately; the 10k-row filter/sort follows as a deferred render.
+  // Typing and chip clicks render immediately; the 1.2k-row filter/sort follows as a deferred render.
   const deferredFilters = useDeferredValue(filters);
   const rows = useMemo(() => selectRows(all, deferredFilters), [all, deferredFilters]);
   const stale = deferredFilters !== filters;
+  const pages = pageCount(rows.length);
+  const page = Math.min(deferredFilters.page, pages);
+  const pageRows = useMemo(
+    () => rows.slice((page - 1) * PAGE_SIZE, page * PAGE_SIZE),
+    [rows, page],
+  );
 
   const update = useCallback(
     (patch: Partial<Filters>, options: { replace?: boolean } = {}) => {
-      setSearchParams((prev) => serializeFilters({ ...parseFilters(prev), ...patch }), {
+      // Any filter/sort change goes back to page 1; only explicit page changes keep the patch's page.
+      setSearchParams((prev) => serializeFilters({ ...parseFilters(prev), page: 1, ...patch }), {
         replace: options.replace,
       });
     },
@@ -72,14 +83,14 @@ export default function QueuePage() {
     (select: boolean) => {
       setSelected((prev) => {
         const next = new Set(prev);
-        for (const r of rows) {
+        for (const r of pageRows) {
           if (select) next.add(r.id);
           else next.delete(r.id);
         }
         return next;
       });
     },
-    [rows],
+    [pageRows],
   );
   useEffect(() => {
     const clear = () => setSelected(new Set());
@@ -88,7 +99,7 @@ export default function QueuePage() {
   }, []);
 
   const onOpen = useCallback(
-    (id: string) => navigate({ pathname: `/findings/${id}`, search: location.search }),
+    (id: string) => navigate({ pathname: `/exposures/findings/${id}`, search: location.search }),
     [navigate, location.search],
   );
 
@@ -96,8 +107,16 @@ export default function QueuePage() {
   const [focusRequest, setFocusRequest] = useState<{ id: string }>();
   const lastOpen = useRef<string | undefined>(openId);
   useEffect(() => {
-    if (lastOpen.current && !openId) setFocusRequest({ id: lastOpen.current });
+    if (lastOpen.current && !openId) {
+      // Closing the drawer returns to the row it was opened from, even if that is on another page.
+      const index = rows.findIndex((r) => r.id === lastOpen.current);
+      if (index >= 0 && Math.floor(index / PAGE_SIZE) + 1 !== page)
+        update({ page: Math.floor(index / PAGE_SIZE) + 1 }, { replace: true });
+      setFocusRequest({ id: lastOpen.current });
+    }
     lastOpen.current = openId;
+    // Only when the drawer closes.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [openId]);
 
   const exportRef = useRef<HTMLButtonElement>(null);
@@ -120,7 +139,7 @@ export default function QueuePage() {
     <div className="flex min-h-0 flex-1 flex-col">
       <div className="flex flex-wrap items-end justify-between gap-3 px-4 pt-4 sm:px-6">
         <div>
-          <h1 className="text-xl font-semibold">Exposure queue</h1>
+          <h1 className="text-2xl font-bold">Exposure queue</h1>
           <p className="text-sm text-muted" aria-hidden="true">
             {rows.length.toLocaleString()} of {all.length.toLocaleString()} findings · sorted by{' '}
             {sortLabel}
@@ -146,42 +165,62 @@ export default function QueuePage() {
             </>
           )}
           <Button ref={exportRef} size="sm" onClick={exportCsv}>
+            <Download aria-hidden="true" className="size-4" />
             Export {selected.size ? 'selected' : 'filtered'} CSV
           </Button>
         </div>
       </div>
-      <FilterBar
-        filters={filters}
-        onChange={update}
-        onClear={() => setSearchParams(serializeFilters(DEFAULT_FILTERS))}
-      />
-      <p role="status" className="sr-only">
-        {selected.size ? `${selected.size.toLocaleString()} findings selected` : ''}
-      </p>
-      {/* One polite announcement per settled result, instead of on every keystroke. */}
-      <div role="status" aria-live="polite" className="sr-only">
-        {stale
-          ? ''
-          : `${rows.length.toLocaleString()} findings, sorted by ${sortLabel}, ${filters.dir === 'desc' ? 'descending' : 'ascending'}.`}
-      </div>
-      <div
-        className={
-          stale
-            ? 'flex min-h-0 flex-1 flex-col opacity-70 transition-opacity'
-            : 'flex min-h-0 flex-1 flex-col'
-        }
-      >
-        <FindingsTable
-          rows={rows}
-          totalCount={all.length}
-          selected={selected}
-          onToggle={onToggle}
-          onToggleAll={onToggleAll}
-          onOpen={onOpen}
-          sort={filters.sort}
-          dir={filters.dir}
-          onSort={onSort}
-          focusRequest={focusRequest}
+      {/* Card framing like a product table view: a single "All exposures" view header, filters, table. */}
+      <div className="mx-4 mt-3 mb-4 flex min-h-0 flex-1 flex-col overflow-hidden rounded-xl border border-line bg-surface shadow-sm sm:mx-6">
+        <div className="flex items-end border-b border-line px-4">
+          <h2 className="-mb-px border-b-2 border-accent px-1 pt-3 pb-2 text-sm font-bold text-accent">
+            All exposures{' '}
+            <span className="ml-1 rounded-full bg-surface-2 px-2 py-0.5 text-xs tabular-nums">
+              {rows.length.toLocaleString()}
+            </span>
+          </h2>
+        </div>
+        <FilterBar
+          filters={filters}
+          onChange={update}
+          onClear={() => setSearchParams(serializeFilters(DEFAULT_FILTERS))}
+        />
+        <p role="status" className="sr-only">
+          {selected.size ? `${selected.size.toLocaleString()} findings selected` : ''}
+        </p>
+        {/* One polite announcement per settled result, instead of on every keystroke. */}
+        <div role="status" aria-live="polite" className="sr-only">
+          {stale
+            ? ''
+            : `${rows.length.toLocaleString()} findings, sorted by ${sortLabel}, ${filters.dir === 'desc' ? 'descending' : 'ascending'}.`}
+        </div>
+        <div
+          className={
+            stale
+              ? 'flex min-h-0 flex-1 flex-col opacity-70 transition-opacity'
+              : 'flex min-h-0 flex-1 flex-col'
+          }
+        >
+          <FindingsTable
+            rows={pageRows}
+            offset={(page - 1) * PAGE_SIZE}
+            matchCount={rows.length}
+            totalCount={all.length}
+            selected={selected}
+            onToggle={onToggle}
+            onToggleAll={onToggleAll}
+            onOpen={onOpen}
+            sort={filters.sort}
+            dir={filters.dir}
+            onSort={onSort}
+            focusRequest={focusRequest}
+          />
+        </div>
+        <Pagination
+          page={page}
+          pages={pages}
+          total={rows.length}
+          onPage={(next) => update({ page: next })}
         />
       </div>
       <Outlet />

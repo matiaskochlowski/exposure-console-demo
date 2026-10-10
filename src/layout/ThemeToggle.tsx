@@ -1,40 +1,37 @@
-import { useEffect, useState } from 'react';
+import { Monitor, Moon, Sun } from 'lucide-react';
+import { useEffect } from 'react';
 import { Button } from '../ui/index.js';
+import { applyTheme, setTheme, useTheme, type Theme } from './theme.js';
 
-type Theme = 'system' | 'light' | 'dark';
-const KEY = 'exposure-console:theme';
 const NEXT: Record<Theme, Theme> = { system: 'light', light: 'dark', dark: 'system' };
+const ICON = { system: Monitor, light: Sun, dark: Moon } satisfies Record<Theme, unknown>;
 
-function readTheme(): Theme {
-  try {
-    const value = localStorage.getItem(KEY);
-    return value === 'light' || value === 'dark' ? value : 'system';
-  } catch {
-    return 'system';
-  }
-}
-
-export function ThemeToggle() {
-  const [theme, setTheme] = useState<Theme>(readTheme);
-  useEffect(() => {
-    const root = document.documentElement;
-    if (theme === 'system') delete root.dataset.theme;
-    else root.dataset.theme = theme;
-    try {
-      localStorage.setItem(KEY, theme);
-    } catch {
-      // Preference just won't persist.
-    }
-  }, [theme]);
+/** `compact` drops the visible label (the rail); the accessible name always states the theme. */
+export function ThemeToggle({
+  compact = false,
+  className,
+  'aria-describedby': describedBy,
+}: {
+  compact?: boolean;
+  className?: string;
+  /** Set by a wrapping Tooltip. */
+  'aria-describedby'?: string;
+}) {
+  const theme = useTheme();
+  useEffect(() => applyTheme(theme), [theme]);
+  const Icon = ICON[theme];
   return (
     <Button
       size="sm"
       variant="ghost"
       onClick={() => setTheme(NEXT[theme])}
       aria-label={`Theme: ${theme}. Switch to ${NEXT[theme]}`}
+      title={describedBy ? undefined : `Theme: ${theme}`}
+      aria-describedby={describedBy}
+      className={className}
     >
-      <span aria-hidden="true">{theme === 'dark' ? '☾' : theme === 'light' ? '☀' : '◐'}</span>
-      <span className="hidden capitalize sm:inline">{theme}</span>
+      <Icon aria-hidden="true" className="size-4" />
+      {!compact && <span className="hidden capitalize sm:inline">{theme}</span>}
     </Button>
   );
 }

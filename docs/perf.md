@@ -2,21 +2,20 @@
 
 Measured on an Apple Silicon laptop, headless Chromium, production build (`vite preview`).
 
-| Budget                                      | Target                          | How it is checked                                    | Latest                     |
-| ------------------------------------------- | ------------------------------- | ---------------------------------------------------- | -------------------------- |
-| Initial JS (gzip)                           | ≤ 250 KiB                       | `npm run size` in CI (`size-limit`)                  | ~131 KiB                   |
-| Filter-to-render, 10k rows, 4× CPU throttle | median ≤ 200 ms                 | `e2e/perf.spec.ts` (writes `test-results/perf.json`) | median ~48 ms, max ~64 ms  |
-| Rendered table rows                         | ≤ 40 regardless of dataset size | `e2e/queue.spec.ts`                                  | ~18–26                     |
-| Dataset payload                             | informational                   | printed by `npm run data`                            | 4.9 MB raw / ~540 KiB gzip |
+| Budget                                       | Target                          | How it is checked                                    | Latest                     |
+| -------------------------------------------- | ------------------------------- | ---------------------------------------------------- | -------------------------- |
+| Initial JS (gzip)                            | ≤ 250 KiB                       | `npm run size` in CI (`size-limit`)                  | ~131 KiB                   |
+| Filter-to-render, 1.2k rows, 4× CPU throttle | median ≤ 200 ms                 | `e2e/perf.spec.ts` (writes `test-results/perf.json`) | median ~24 ms, max ~29 ms  |
+| Rendered table rows                          | ≤ 50 regardless of dataset size | `e2e/queue.spec.ts`                                  | 50                         |
+| Dataset payload                              | informational                   | printed by `npm run data`                            | 614 KiB raw / ~55 KiB gzip |
 
 ## What makes it fast
 
-- **Virtualised native table** (`@tanstack/react-virtual` + spacer rows): DOM size is constant.
-  `overflow-anchor: none` on the scroller — browser scroll anchoring otherwise "compensates" for the
-  growing top spacer and doubles programmatic jumps (found by the focus-restore E2E test).
+- **Paginated native table** (50 rows per page, `page` in the URL): DOM size is constant, with real
+  table semantics (`aria-rowcount`/`aria-rowindex` span all pages).
 - **Work moved out of render:** risk score, priority and a lower-cased search haystack are computed once
   at load; filter + sort is one pure function over arrays (`selectRows`).
-- **Deferred rendering:** the 10k-row recompute runs under `useDeferredValue`, so chip clicks and typing
+- **Deferred rendering:** the 1.2k-row recompute runs under `useDeferredValue`, so chip clicks and typing
   paint immediately; search input is debounced 150 ms before touching the URL.
 - **Memoised rows** (`React.memo`) with stable callbacks, so a selection change re-renders one row.
 - **Code splitting:** the drawer (markdown renderer, AI panel) is a lazy chunk loaded on first open.

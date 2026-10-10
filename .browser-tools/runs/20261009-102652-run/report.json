@@ -1,0 +1,19 @@
+{
+  "command": "run",
+  "ok": true,
+  "startedAt": "2026-10-09T16:26:52.474Z",
+  "durationMs": 2639,
+  "baseURL": "http://localhost:5173",
+  "outDir": "/Users/mk/Development/matiaskochlowski/exposure-console-demo/.browser-tools/runs/20261009-102652-run",
+  "findings": [
+    {
+      "failures": [],
+      "warnings": [],
+      "files": [],
+      "route": "../../../../../private/tmp/claude-501/-Users-mk-Development-matiaskochlowski-exposure-console-demo/f583a56f-ab49-4deb-9652-04cc376ac07e/scratchpad/m4.ts",
+      "url": "http://localhost:5173/",
+      "viewport": "desktop",
+      "ok": true
+    }
+  ]
+}

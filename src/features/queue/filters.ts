@@ -1,5 +1,11 @@
 import { z } from 'zod';
-import { ENVIRONMENTS, PRIORITIES, STATUSES, type Priority } from '../../shared/finding.js';
+import {
+  DOMAINS,
+  ENVIRONMENTS,
+  PRIORITIES,
+  STATUSES,
+  type Priority,
+} from '../../shared/finding.js';
 import type { Row } from '../../data/findings.js';
 
 export const SORT_KEYS = ['risk', 'cvss', 'epss', 'firstSeen', 'id'] as const;
@@ -31,6 +37,7 @@ export const filtersSchema = z.object({
   priority: csvOf(PRIORITIES),
   status: csvOf(STATUSES),
   env: csvOf(ENVIRONMENTS),
+  domain: csvOf(DOMAINS),
   kev: flag,
   validated: flag,
   sort: z
@@ -43,7 +50,21 @@ export const filtersSchema = z.object({
     .optional()
     .catch(undefined)
     .transform((v) => v ?? 'desc'),
+  /** 1-based page number; clamped against the result count at render time. */
+  page: z
+    .string()
+    .optional()
+    .transform((v) => {
+      const n = Number.parseInt(v ?? '', 10);
+      return Number.isFinite(n) && n > 1 ? Math.min(n, 100_000) : 1;
+    }),
 });
+
+export const PAGE_SIZE = 50;
+
+export function pageCount(total: number): number {
+  return Math.max(1, Math.ceil(total / PAGE_SIZE));
+}
 
 export type Filters = z.output<typeof filtersSchema>;
 export const DEFAULT_FILTERS: Filters = filtersSchema.parse({});
@@ -56,12 +77,13 @@ export function parseFilters(params: URLSearchParams): Filters {
 export function serializeFilters(filters: Filters): URLSearchParams {
   const out = new URLSearchParams();
   if (filters.q) out.set('q', filters.q);
-  for (const key of ['priority', 'status', 'env'] as const)
+  for (const key of ['priority', 'status', 'env', 'domain'] as const)
     if (filters[key].length) out.set(key, filters[key].join(','));
   if (filters.kev) out.set('kev', '1');
   if (filters.validated) out.set('validated', '1');
   if (filters.sort !== 'risk') out.set('sort', filters.sort);
   if (filters.dir !== 'desc') out.set('dir', filters.dir);
+  if (filters.page > 1) out.set('page', String(filters.page));
   return out;
 }
 
@@ -82,12 +104,14 @@ export function selectRows(rows: readonly Row[], f: Filters): Row[] {
   const priority = f.priority.length ? new Set(f.priority) : null;
   const status = f.status.length ? new Set(f.status) : null;
   const env = f.env.length ? new Set(f.env) : null;
+  const domain = f.domain.length ? new Set(f.domain) : null;
   const out = rows.filter(
     (r) =>
       (!q || r.searchText.includes(q)) &&
       (!priority || priority.has(r.priority)) &&
       (!status || status.has(r.effectiveStatus)) &&
       (!env || env.has(r.environment)) &&
+      (!domain || domain.has(r.domain)) &&
       (!f.kev || r.kev) &&
       (!f.validated || r.exploitValidated),
   );

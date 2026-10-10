@@ -1,57 +1,72 @@
 import { expect, test } from '@playwright/test';
-import { findings, freshPage } from './fixtures.js';
+import { findings, freshPage, toggleFilter } from './fixtures.js';
 
-test('loads 10k findings but renders only a window of rows', async ({ page }) => {
+test('loads 1.2k findings but renders one page of rows', async ({ page }) => {
   await freshPage(page);
-  await expect(page.getByText(/10,000 of 10,000 findings/)).toBeVisible();
-  const rendered = await page.locator('tbody tr[data-id]').count();
-  expect(rendered).toBeGreaterThan(5);
-  expect(rendered).toBeLessThanOrEqual(40);
+  await expect(page.getByText(/1,200 of 1,200 findings/)).toBeVisible();
+  await expect(page.locator('tbody tr[data-id]')).toHaveCount(50);
   await expect(page.getByRole('table', { name: 'Findings' })).toHaveAttribute(
     'aria-rowcount',
-    '10001',
+    '1201',
   );
+  await expect(page.getByText('1–50 of 1,200')).toBeVisible();
+});
+
+test('pagination moves between pages, lives in the URL and resets on filter change', async ({
+  page,
+}) => {
+  await freshPage(page);
+  const nav = page.getByRole('navigation', { name: 'Pagination' });
+  await expect(nav.getByRole('button', { name: 'Previous page' })).toBeDisabled();
+  await nav.getByRole('button', { name: 'Next page' }).click();
+  await expect(page).toHaveURL(/page=2/);
+  await expect(page.getByText('51–100 of 1,200')).toBeVisible();
+  await expect(page.locator('tbody tr[data-id]').first()).toHaveAttribute('aria-rowindex', '52');
+  await nav.getByRole('button', { name: 'Last page' }).click();
+  await expect(page.getByText('1,151–1,200 of 1,200')).toBeVisible();
+  await expect(nav.getByRole('button', { name: 'Next page' })).toBeDisabled();
+  await toggleFilter(page, 'Priority', 'P1');
+  await expect(page).not.toHaveURL(/page=/);
+  await page.goBack();
+  await expect(page).toHaveURL(/page=24/);
 });
 
 test('filters live in the URL and survive back/forward', async ({ page }) => {
   await freshPage(page);
-  await page.getByRole('button', { name: 'P1', exact: true }).click();
+  await toggleFilter(page, 'Priority', 'P1');
   await expect(page).toHaveURL(/priority=P1/);
-  await expect(page.getByRole('button', { name: 'P1', exact: true })).toHaveAttribute(
-    'aria-pressed',
-    'true',
-  );
-  const p1Count = await page.getByText(/of 10,000 findings/).textContent();
+  await expect(page.getByRole('button', { name: 'Priority: P1' })).toBeVisible();
+  const p1Count = await page.getByText(/of 1,200 findings/).textContent();
 
-  await page.getByRole('button', { name: 'Known exploited' }).click();
+  await toggleFilter(page, 'Signals', 'Known exploited');
   await expect(page).toHaveURL(/kev=1/);
 
   await page.goBack();
   await expect(page).not.toHaveURL(/kev=1/);
-  await expect(page.getByText(/of 10,000 findings/)).toHaveText(p1Count!);
+  await expect(page.getByText(/of 1,200 findings/)).toHaveText(p1Count!);
   await page.goBack();
-  await expect(page.getByText(/10,000 of 10,000 findings/)).toBeVisible();
+  await expect(page.getByText(/1,200 of 1,200 findings/)).toBeVisible();
 });
 
 test('search narrows to a single finding by id', async ({ page }) => {
   await freshPage(page);
   await page.getByRole('searchbox', { name: 'Search findings' }).fill(findings.openP1.id);
   await expect(page).toHaveURL(new RegExp(`q=${findings.openP1.id}`));
-  await expect(page.getByText(/^1 of 10,000 findings/)).toBeVisible();
+  await expect(page.getByText(/^1 of 1,200 findings/)).toBeVisible();
 });
 
 test('invalid URL filters fall back to defaults', async ({ page }) => {
-  await freshPage(page, '/?priority=P9&sort=drop_table&dir=up');
-  await expect(page.getByText(/10,000 of 10,000 findings · sorted by risk/)).toBeVisible();
+  await freshPage(page, '/exposures?priority=P9&sort=drop_table&dir=up');
+  await expect(page.getByText(/1,200 of 1,200 findings · sorted by risk/)).toBeVisible();
 });
 
 test('sorting is announced through aria-sort', async ({ page }) => {
   await freshPage(page);
   const cvss = page.getByRole('columnheader', { name: /CVSS/ });
   test.skip(!(await cvss.isVisible()), 'CVSS column hidden at this width');
-  await cvss.getByRole('button').click();
+  await cvss.getByRole('button', { name: 'CVSS', exact: true }).click();
   await expect(cvss).toHaveAttribute('aria-sort', 'descending');
-  await cvss.getByRole('button').click();
+  await cvss.getByRole('button', { name: 'CVSS', exact: true }).click();
   await expect(cvss).toHaveAttribute('aria-sort', 'ascending');
 });
 
@@ -63,7 +78,7 @@ test('deep link opens the drawer after a reload, Escape closes it', async ({ pag
   await expect(drawer).toBeVisible();
   await page.keyboard.press('Escape');
   await expect(drawer).toBeHidden();
-  await expect(page).toHaveURL(/\/\?priority=P1$/);
+  await expect(page).toHaveURL(/\/exposures\?priority=P1(&page=\d+)?$/);
   // Focus goes back to the row the drawer belonged to.
   await expect(page.locator(`tr[data-id="${findings.openP1.id}"]`)).toBeFocused();
 });
@@ -72,8 +87,8 @@ test('keyboard only: Tab into the table, move with arrows, open with Enter @desk
   page,
 }) => {
   await freshPage(page);
-  // Last control before the table body; Tab must land on a row (roving tabindex).
-  await page.getByRole('columnheader', { name: 'First seen' }).getByRole('button').focus();
+  // Last header control before the table body; Tab must land on a row (roving tabindex).
+  await page.getByRole('button', { name: 'What does Status mean?' }).focus();
   await page.keyboard.press('Tab');
   await expect(page.locator('tbody tr[data-index="0"]')).toBeFocused();
   await page.keyboard.press('ArrowDown');
@@ -89,27 +104,15 @@ test('keyboard only: Tab into the table, move with arrows, open with Enter @desk
   await page.keyboard.press('Escape');
   await expect(third).toBeFocused();
   await page.keyboard.press('End');
-  await expect(page.locator('tbody tr[data-index="9999"]')).toBeFocused();
-});
-
-test('Tab still reaches the table after scrolling the focused row out of view @desktop-only', async ({
-  page,
-}) => {
-  await freshPage(page);
-  await page.locator('tbody tr[data-index="0"]').focus();
-  await page.getByTestId('queue-scroll').evaluate((el) => (el.scrollTop = 200_000));
-  await expect(page.locator('tbody tr[data-index="0"]')).toHaveCount(0);
-  await page.getByRole('columnheader', { name: 'First seen' }).getByRole('button').focus();
-  await page.keyboard.press('Tab');
-  await expect(page.locator('tbody tr:focus')).toHaveCount(1);
+  await expect(page.locator('tbody tr[data-index="49"]')).toBeFocused();
 });
 
 test('selection survives filtering and exports CSV', async ({ page }) => {
   await freshPage(page);
-  await page.getByRole('button', { name: 'P1', exact: true }).click();
-  await page.getByRole('checkbox', { name: /Select all \d+ matching findings/ }).check();
+  await toggleFilter(page, 'Priority', 'P1');
+  await page.getByRole('checkbox', { name: /Select all \d+ findings on this page/ }).check();
   const selectedText = await page.getByText(/\d+ selected/).textContent();
-  await page.getByRole('button', { name: 'P1', exact: true }).click();
+  await toggleFilter(page, 'Priority', 'P1');
   await expect(page.getByText(/\d+ selected/)).toHaveText(selectedText!);
   const download = page.waitForEvent('download');
   await page.getByRole('button', { name: 'Export selected CSV' }).click();
@@ -121,4 +124,24 @@ test('unknown routes and unknown findings are handled', async ({ page }) => {
   await expect(page.getByRole('dialog', { name: 'Finding not found' })).toBeVisible();
   await page.goto('/no/such/page');
   await expect(page.getByRole('heading', { name: 'Page not found' })).toBeVisible();
+});
+
+test('filter dropdowns take several values and can be cleared', async ({ page }) => {
+  await freshPage(page);
+  await toggleFilter(page, 'Priority', 'P1');
+  await toggleFilter(page, 'Priority', 'P2');
+  await expect(page).toHaveURL(/priority=P1%2CP2/);
+  await expect(page.getByRole('button', { name: 'Priority: P1, P2' })).toBeVisible();
+
+  await page.getByRole('button', { name: /^Priority/ }).click();
+  await page.getByRole('button', { name: 'Clear priority' }).click();
+  await expect(page).not.toHaveURL(/priority=/);
+});
+
+test('domain filter shows coloured options and narrows the queue', async ({ page }) => {
+  await freshPage(page);
+  await toggleFilter(page, 'Domain', 'Payments');
+  await expect(page).toHaveURL(/domain=payments/);
+  await expect(page.getByRole('button', { name: 'Domain: Payments' })).toBeVisible();
+  await expect(page.getByText(/^\d+ of 1,200 findings/)).not.toHaveText(/^1,200 of/);
 });

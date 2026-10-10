@@ -58,7 +58,7 @@ export function loadDataset(url = '/data/findings.json'): Promise<Dataset> {
     })
     .then((json) => {
       if (!Array.isArray(json)) throw new Error('Findings payload is not a list');
-      // Validate a sample: full Zod validation of 10k rows costs more than it protects here.
+      // Validate a sample: full Zod validation of every row costs more than it protects here.
       for (const item of json.slice(0, 25)) findingSchema.parse(item);
       const rows = (json as Finding[]).map(enrich);
       return { rows, byId: new Map(rows.map((r) => [r.id, r])) };

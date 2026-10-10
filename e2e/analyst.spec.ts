@@ -46,8 +46,11 @@ test('analyst proposes, person edits and approves, queue reflects the result', a
   await expect(row.getByText('SIM-1001')).toBeVisible();
 
   // Persists across reload; Reset demo clears it.
-  await page.goto(`/?q=${f.id}`);
+  await page.goto(`/exposures?q=${f.id}`);
   await expect(page.locator(`tr[data-id="${f.id}"]`).getByText('SIM-1001')).toBeVisible();
+  // On desktop, reset lives in the sidebar account menu; on mobile it is in the top bar.
+  const account = page.getByRole('button', { name: /^Sam Rivera/ });
+  if (await account.isVisible()) await account.click();
   await page.getByRole('button', { name: 'Reset demo' }).click();
   await expect(page.locator(`tr[data-id="${f.id}"]`).getByText('SIM-1001')).toHaveCount(0);
 });
@@ -97,7 +100,7 @@ test('stop aborts a streaming answer', async ({ page }) => {
   await page.getByRole('button', { name: 'Stop' }).click();
   await expect(page.getByText('Stopped.')).toBeVisible();
   await expect(page.getByTestId('proposal')).toHaveCount(0);
-  await expect(page.getByRole('button', { name: 'Ask' })).toBeVisible();
+  await expect(page.getByRole('button', { name: 'Ask', exact: true })).toBeVisible();
 });
 
 test('Escape inside the edit form cancels the edit, not the drawer', async ({ page }) => {

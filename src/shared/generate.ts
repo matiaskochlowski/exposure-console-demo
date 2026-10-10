@@ -1,4 +1,4 @@
-import type { Environment, Finding, Status } from './finding.js';
+import { DOMAINS, type Domain, type Environment, type Finding, type Status } from './finding.js';
 
 /**
  * Deterministic synthetic dataset. The browser loads it as /data/findings.json (written by
@@ -6,7 +6,7 @@ import type { Environment, Finding, Status } from './finding.js';
  * a finding up by id instead of trusting whatever record a client sends.
  */
 export const DATASET_SEED = 20261008;
-export const DATASET_SIZE = 10_000;
+export const DATASET_SIZE = 1200;
 
 /** Mulberry32: tiny, fast, good enough for demo data. */
 function rng(seed: number) {
@@ -81,6 +81,7 @@ interface Asset {
   ip: string;
   owner: string;
   environment: Environment;
+  domain: Domain;
   criticality: number;
 }
 
@@ -95,6 +96,7 @@ function makeAssets(r: () => number, count: number): Asset[] {
       ip: `10.${Math.floor(r() * 32)}.${Math.floor(r() * 255)}.${1 + Math.floor(r() * 253)}`,
       owner: `team-${pick(r, ROLES)}@example.com`,
       environment,
+      domain: environment === 'corporate' ? 'corporate_it' : pick(r, DOMAINS),
       criticality: environment === 'production' ? 3 + Math.round(r()) : 1 + Math.floor(r() * 3),
     };
   });
@@ -144,6 +146,7 @@ export function generateFindings(size = DATASET_SIZE, seed = DATASET_SEED): Find
       ip: asset.ip,
       owner: asset.owner,
       environment: asset.environment,
+      domain: asset.domain,
       assetCriticality: asset.criticality,
       status: pickStatus(r),
       firstSeen: new Date(start + Math.floor(r() * span)).toISOString().slice(0, 10),

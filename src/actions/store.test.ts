@@ -54,6 +54,18 @@ describe('parseActionsState', () => {
     expect(parseActionsState(raw)).toEqual(EMPTY_STATE);
   });
 
+  it.each([
+    ['findingId', { at: '2026-01-01T00:00:00.000Z', findingId: 'x'.repeat(5000) }],
+    ['at', { at: '9'.repeat(5000), findingId: 'DEMO-2026-00001' }],
+  ])('rejects an oversized audit %s (it would bloat the Activity page)', async (_, fields) => {
+    const { parseActionsState } = await import('./schema.js');
+    const raw = JSON.stringify({
+      ...EMPTY_STATE,
+      audit: [{ ...fields, summary: 's', actor: 'you' }],
+    });
+    expect(parseActionsState(raw)).toEqual(EMPTY_STATE);
+  });
+
   it('accepts a valid stored state', async () => {
     const { parseActionsState } = await import('./schema.js');
     const valid = {

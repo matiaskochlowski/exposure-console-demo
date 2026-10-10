@@ -1,4 +1,5 @@
-import { useCallback, useId, useRef, useState } from 'react';
+import { Sparkles } from 'lucide-react';
+import { useCallback, useEffect, useId, useRef, useState, type RefObject } from 'react';
 import { useActionsState } from '../../actions/store.js';
 import type { AssistantProvider } from '../../ai/provider.js';
 import type { Row } from '../../data/findings.js';
@@ -27,10 +28,13 @@ export function AssistantPanel({
   row,
   provider,
   getBase,
+  askRef,
 }: {
   row: Row;
   provider: AssistantProvider;
   getBase: (id: string) => Finding | undefined;
+  /** Filled with this panel's submit, so "What does this mean?" in the drawer can ask the analyst. */
+  askRef?: RefObject<((question: string) => void) | null>;
 }) {
   const [question, setQuestion] = useState('');
   const inputId = useId();
@@ -66,9 +70,31 @@ export function AssistantPanel({
     inputRef.current?.focus(); // suggestion buttons disappear after the first question
   };
 
+  // Questions from "What does this mean?" buttons: unlike `submit`, keep whatever the person typed,
+  // and say so when the analyst is busy instead of dropping the question (security-reviewer note).
+  const [hintNotice, setHintNotice] = useState('');
+  const askFromHint = (text: string) => {
+    if (busy) {
+      setHintNotice(`The analyst is still answering. Ask “${text}” again when it finishes.`);
+      return;
+    }
+    setHintNotice('');
+    void ask(text);
+    inputRef.current?.focus();
+  };
+
+  useEffect(() => {
+    if (!askRef) return;
+    askRef.current = askFromHint;
+    return () => {
+      askRef.current = null;
+    };
+  });
+
   return (
     <section aria-labelledby={`${inputId}-heading`} className="flex flex-col gap-3">
-      <div className="flex flex-wrap items-center gap-2">
+      <div className="flex flex-wrap items-center gap-2 rounded-lg border-l-4 border-accent bg-surface-2 px-3 py-2">
+        <Sparkles aria-hidden="true" className="size-4 text-accent" />
         <h3 id={`${inputId}-heading`} className="text-base font-semibold">
           AI analyst
         </h3>
@@ -164,6 +190,10 @@ export function AssistantPanel({
           ))}
         </div>
       )}
+
+      <p role="status" className={hintNotice ? 'text-xs text-warn' : 'sr-only'}>
+        {hintNotice}
+      </p>
 
       <form
         className="flex gap-2"

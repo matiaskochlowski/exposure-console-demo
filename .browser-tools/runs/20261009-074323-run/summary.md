@@ -1,0 +1,11 @@
+# browser-tools run: FAIL
+
+- started: 2026-10-09T13:43:23.777Z (3.0s)
+- base URL: http://localhost:5173
+- results: 0/1 ok
+
+## FAIL ../../../../../private/tmp/claude-501/-Users-mk-Development-matiaskochlowski-exposure-console-demo/f583a56f-ab49-4deb-9652-04cc376ac07e/scratchpad/m.ts (desktop)
+
+- url: http://localhost:5173/exposures
+- file: /Users/mk/Development/matiaskochlowski/exposure-console-demo/.browser-tools/runs/20261009-074323-run/failure.png
+- ✗ page.evaluate: ReferenceError: __name is not defined     at eval (eval at evaluate (:311:30), <anonymous>:1:14)     at UtilityScript.evaluate (<anonymous>:313:16)

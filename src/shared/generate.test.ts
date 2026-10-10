@@ -10,7 +10,7 @@ describe('generateFindings', () => {
   });
 
   it('produces valid, uniquely identified rows', () => {
-    expect(rows).toHaveLength(10_000);
+    expect(rows).toHaveLength(1200);
     expect(new Set(rows.map((r) => r.id)).size).toBe(rows.length);
     for (const row of rows.slice(0, 200)) expect(() => findingSchema.parse(row)).not.toThrow();
   });
